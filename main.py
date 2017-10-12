@@ -11,8 +11,8 @@ else:
 with open(filename, 'r') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=delimiter)
     header = next(csvreader)
-    lengths = [0]*len(list(header))
-    content = []
+    lengths = [len(i) for i in list(header)]
+    content = [header]
     for row in csvreader:
         row_content = []
         for i, cell in enumerate(row):
@@ -21,15 +21,10 @@ with open(filename, 'r') as csvfile:
         content.append(row_content)
 
 lengths = [l + 1 for l in lengths]
-row_length = len(lengths)
-output_string = ''
+num_rows = len(lengths)
 
 for row in content:
-    for i in range(row_length):
-        output_string += '{0:>{width}}'.format(row[i], width=lengths[i])
-    output_string += '\n'
-
-# Remove last newline
-output_string = output_string.strip()
-
-print(output_string.strip())
+    output = ''
+    for i in range(num_rows):
+        output += '{0:>{width}}'.format(row[i], width=lengths[i])
+    print(output)
