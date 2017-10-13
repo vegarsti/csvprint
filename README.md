@@ -8,10 +8,10 @@ I needed to quickly look at some csv files, but I didn't like the usability of t
 
 ```
 > pycolumn example.csv
-  Widget name Size Price
-      Trinket 1000    80
-       Doodad   10     8
-      Trunket  190  9000
+Widget name Size Price
+    Trinket 1000    80
+     Doodad   10     8
+    Trunket  190  9000
 ```
 
 ## Installation
