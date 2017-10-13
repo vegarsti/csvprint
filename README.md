@@ -21,4 +21,5 @@ Add an alias for `python /path/to/pycolumn.py` to your shell config, e.g. `echo 
 ## Features
 `pycolumn -h` prints a help message.
 
-* `-s` flag to handle delimiters that are not commas
+* `-s` to specify delimiter (default is comma)
+* `-w` to specify spacing between columns (default is 1)
