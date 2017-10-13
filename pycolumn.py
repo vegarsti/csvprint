@@ -19,6 +19,8 @@ def main():
     parser.add_argument('filename', type=str, help='file to pretty print')
     parser.add_argument('-s', '--separator', type=str, default=',',
         help='separator/delimiter used in the csv file\ndefault is ,')
+    parser.add_argument('-w', '--width', type=int, default=1,
+        help='width of space between columns\ndefault is 1')
     args = parser.parse_args()
 
     filename = args.filename
@@ -35,7 +37,7 @@ def main():
                 row_content.append(cell)
             content.append(row_content)
 
-    lengths = [l + 1 for l in lengths]
+    lengths = [l + args.width for l in lengths]
     num_rows = len(lengths)
 
     for row in content:
