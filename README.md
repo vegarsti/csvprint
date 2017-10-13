@@ -7,16 +7,16 @@ I needed to quickly look at some csv files, but I didn't like the usability of t
 ## Example
 
 ```
-> python pycolumn.py example.csv
-  Widget Size Price
- Trinket 1000    80
-  Doodad   10     8
- Trunket  190  9000
+> pycolumn example.csv
+  Widget name Size Price
+      Trinket 1000    80
+       Doodad   10     8
+      Trunket  190  9000
 ```
 
 ## Installation
 
-Add an alias for `python /path/to/pycolumn.py` in your shell config, e.g. `echo "alias pycolumn='python3 /path/to/pycolumn.py'" >> ~/.bash_profile`.
+Add an alias for `python /path/to/pycolumn.py` to your shell config, e.g. `echo "alias pycolumn='python3 /path/to/pycolumn.py'" >> ~/.bash_profile`.
 
 ## Features
 `pycolumn -h` prints a help message.
