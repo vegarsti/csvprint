@@ -1,5 +1,5 @@
 # `pycolumn`
-A Python implementation of the [UNIX utility `column`](https://linux.die.net/man/1/column). Nothing fancy, just a way to quickly get a decent pretty printed version of csv files.
+A Python implementation of something akin to the [UNIX utility `column`](https://linux.die.net/man/1/column). Nothing fancy, just a way to quickly get a decent pretty printed version of csv files.
 
 ## Why?
 I needed to quickly look at some csv files, but I didn't like the usability of the UNIX utility and how it printed the columns.
