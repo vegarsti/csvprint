@@ -16,10 +16,16 @@ Widget name Size Price
 
 ## Installation
 
-Add an alias for `python /path/to/pycolumn.py` to your shell config, e.g. `echo "alias pycolumn='python3 /path/to/pycolumn.py'" >> ~/.bash_profile`.
+Clone the repo and add an alias for `python /path/to/pycolumn.py` to your shell config, e.g.
+
+```
+git clone https://github.com/vegarsti/pycolumn.git ~/path/to/
+echo "alias pycolumn='python3 /path/to/pycolumn.py'" >> ~/.bash_profile`
+```
 
 ## Features
 `pycolumn -h` prints a help message.
 
 * `-s` to specify delimiter (default is comma)
 * `-w` to specify spacing between columns (default is 1)
+* `-c` to specify number of rows to show (default is 1000)

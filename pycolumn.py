@@ -21,6 +21,8 @@ def main():
         help='separator/delimiter used in the csv file\ndefault is ,')
     parser.add_argument('-w', '--width', type=int, default=1,
         help='width of space between columns\ndefault is 1')
+    parser.add_argument('-r', '--rows', type=int, default=-1,
+        help='number of rows to show\ndefault is 1000')
     args = parser.parse_args()
 
     filename = args.filename
@@ -30,12 +32,13 @@ def main():
         header = next(csvreader)
         lengths = [len(i) for i in list(header)]
         content = [header]
-        for row in csvreader:
+        for num_rows, row in enumerate(csvreader):
             row_content = []
-            for i, cell in enumerate(row):
-                lengths[i] = max(len(cell), lengths[i])
-                row_content.append(cell)
-            content.append(row_content)
+            if num_rows < args.rows - 1:
+                for i, cell in enumerate(row):
+                    lengths[i] = max(len(cell), lengths[i])
+                    row_content.append(cell)
+                content.append(row_content)
 
     lengths = [l + args.width for l in lengths]
     num_rows = len(lengths)
