@@ -25,11 +25,11 @@ def read_content(filename, max_rows, separator, spacing):
     with open(filename, 'r') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=separator)
         header = next(csvreader)
-        lengths = [len(i) for i in list(header)]
+        lengths = [len(cell) for cell in list(header)]
         content = [header]
-        for num_rows, row in enumerate(csvreader):
+        for row_number, row in enumerate(csvreader):
             row_content = []
-            if num_rows < max_rows - 1:
+            if row_number < max_rows - 1:
                 for i, cell in enumerate(row):
                     lengths[i] = max(len(cell), lengths[i])
                     row_content.append(cell)
