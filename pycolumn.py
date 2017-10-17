@@ -14,7 +14,8 @@ def main():
     # Set up argparse
     parser = argparse.ArgumentParser(
         description='Command line utility for pretty printing csv files.',
-        formatter_class=RawTextHelpFormatter
+        formatter_class=RawTextHelpFormatter,
+        prog='pycolumn'
     )
     parser.add_argument('filename', type=str, help='file to pretty print')
     parser.add_argument('-s', '--separator', type=str, default=',',
