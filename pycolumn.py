@@ -18,7 +18,14 @@ def setup_argparse():
         help='width of space between columns\ndefault is 1')
     parser.add_argument('-r', '--rows', type=int, default=1000,
         help='number of rows to show\ndefault is 1000')
+    parser.add_argument('-j', '--justify', type=str, choices=('l', 'r'),
+        default='r', help='which justification to use \ndefault is r (right)')
     args = parser.parse_args()
+    justification_translator = {
+        'l': '<',
+        'r': '>'
+    }
+    args.justify = justification_translator[args.justify]
     return args
 
 def read_content(filename, max_rows, separator, spacing):
@@ -37,11 +44,11 @@ def read_content(filename, max_rows, separator, spacing):
     lengths = [l + spacing for l in lengths]
     return content, lengths
 
-def print_output(content, lengths):
+def print_output(content, lengths, justification):
     for row in content:
         output = ''
         for i in range(len(lengths)):
-            output += '{0:>{width}}'.format(row[i], width=lengths[i])
+            output += ('{:' + justification + '{width}}').format(row[i], width=lengths[i])
         print(output)
 
 def main():
@@ -52,7 +59,7 @@ def main():
         separator=args.separator,
         spacing=args.width
     )
-    print_output(content, lengths)
+    print_output(content, lengths, args.justify)
 
 if __name__ == '__main__':
     main()

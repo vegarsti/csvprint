@@ -14,6 +14,17 @@ Widget name Size Price
     Trunket  190  9000
 ```
 
+Compare to
+
+```
+column -t -s ',' example.csv
+Widget name  Size  Price
+Trinket      1000  80
+Doodad       10    8
+Trunket      190   9000
+```
+Creating an alias for `column -t -s ','` could work, but I don't like how it left-justifies cells.
+
 ## Installation
 
 Clone the repo and add an alias for `python /path/to/pycolumn.py` to your shell config, e.g.
