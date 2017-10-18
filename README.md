@@ -38,5 +38,6 @@ echo "alias pycolumn='python3 /path/to/pycolumn.py'" >> ~/.bash_profile`
 `pycolumn -h` prints a help message.
 
 * `-s` to specify delimiter (default is comma)
-* `-w` to specify spacing between columns (default is 1)
-* `-c` to specify number of rows to show (default is 1000)
+* `-r` to specify number of rows to show (default is 1000)
+* `-j` to specify which justification to choose (left or right)
+* `-d` decorator to separate fields by (e.g. ' ')
