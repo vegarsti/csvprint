@@ -10,12 +10,18 @@ justification_translator = {
     'r': '>'
 }
 
+parser = argparse.ArgumentParser(
+    description='Command line utility for pretty printing csv files.',
+    formatter_class=RawTextHelpFormatter,
+    prog='csvprint'
+)
+
+
+def print_usage_and_exit():
+    parser.print_usage()
+    exit()
+
 def parse_cli_arguments():
-    parser = argparse.ArgumentParser(
-        description='Command line utility for pretty printing csv files.',
-        formatter_class=RawTextHelpFormatter,
-        prog='csvprint'
-    )
     parser.add_argument('filename', type=str, help='file to pretty print')
     parser.add_argument('-s', '--separator', type=str, default=',',
         help='separator/delimiter used in the csv file\ndefault is ,')
@@ -32,28 +38,43 @@ def parse_cli_arguments():
     return args
 
 def read_content(filename, max_rows, separator):
-    with open(filename, 'r') as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=separator)
-        header = next(csvreader)
-        lengths = [len(cell) for cell in list(header)]
-        content = [header]
-        for row_number, row in enumerate(csvreader):
-            row_content = []
-            if row_number < max_rows - 1:
-                for i, cell in enumerate(row):
-                    lengths[i] = max(len(cell), lengths[i])
-                    row_content.append(cell)
-                content.append(row_content)
+    try:
+        with open(filename, 'r') as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=separator)
+            header = next(csvreader)
+            lengths = [len(cell) for cell in list(header)]
+            number_of_columns = len(lengths)
+            content = [header]
+            for row_number, row in enumerate(csvreader):
+                row_content = []
+                number_of_cells = len(row)
+                if number_of_cells != number_of_columns:
+                    print("Not a properly formatted csv file,\nor '{separator}' is an incorrect separator character.".format(
+                        separator=separator)
+                    )
+                    print()
+                    print_usage_and_exit()
+                if row_number < max_rows - 1:
+                    for i, cell in enumerate(row):
+                        lengths[i] = max(len(cell), lengths[i])
+                        row_content.append(cell)
+                    content.append(row_content)
+    except FileNotFoundError:
+        print("File not found.")
+        print()
+        print_usage_and_exit()
     lengths = [l for l in lengths]
     return content, lengths
 
 def print_output(content, lengths, justification, decorator, header):
     total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
+    number_of_columns = len(lengths)
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
             output += '-'*total_length + '\n'
-        for i in range(len(lengths)):
+        number_of_cells = len(row)
+        for i in range(number_of_columns):
             if i == 0:
                 justification_now = justification_translator['l']
             else:
