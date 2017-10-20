@@ -20,6 +20,8 @@ def parse_cli_arguments():
         default='r', help='which justification to use \ndefault is r (right)')
     parser.add_argument('-d', '--decorator', type=str,
         default=' ', help='which string/decorator to use in spacing')
+    parser.add_argument('--header', action='store_true',
+        help='turn on header decoration')
     args = parser.parse_args()
     justification_translator = {
         'l': '<',
@@ -44,13 +46,18 @@ def read_content(filename, max_rows, separator):
     lengths = [l for l in lengths]
     return content, lengths
 
-def print_output(content, lengths, justification, decorator):
-    for row in content:
+def print_output(content, lengths, justification, decorator, header):
+    total_length = sum(lengths) + (len(lengths)-1)*len(justification)
+    for row_number, row in enumerate(content):
         output = ''
+        if header and row_number == 0:
+            output += '-'*total_length + '\n'
         for i in range(len(lengths)):
             output += ('{:' + justification + '{width}}').format(row[i], width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
+        if header and row_number == 0:
+            output += '\n' + '-'*total_length
         print(output)
 
 def main():
@@ -60,7 +67,7 @@ def main():
         max_rows=args.rows,
         separator=args.separator
     )
-    print_output(content, lengths, args.justify, args.decorator)
+    print_output(content, lengths, args.justify, args.decorator, header=args.header)
 
 if __name__ == '__main__':
     main()
