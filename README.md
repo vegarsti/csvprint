@@ -4,7 +4,7 @@
 Command-line utility for pretty printing csv files.
 
 ## Why?
-I needed to quickly look at some csv files, but I didn't find that the [UNIX utility `column`](https://linux.die.net/man/1/column) solved my problem.
+I needed to quickly look at some csv files, but the [UNIX utility `column`](https://linux.die.net/man/1/column) didn't solve my problem.
 
 ## Example
 
@@ -25,7 +25,7 @@ Trinket      1000  80
 Doodad       10    8
 Trunket      190   9000
 ```
-Creating an alias for `column -t -s ','` could work, but it's a bit lacking, as it doesn't provide support for various justification or decoration.
+Creating an alias for `column -t -s ','` could work, but I found it a a bit lacking, as it doesn't provide support for various justification or decoration.
 
 ## Installation
 
