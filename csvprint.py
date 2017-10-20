@@ -5,6 +5,11 @@ from sys import exit
 import argparse
 from argparse import RawTextHelpFormatter
 
+justification_translator = {
+    'l': '<',
+    'r': '>'
+}
+
 def parse_cli_arguments():
     parser = argparse.ArgumentParser(
         description='Command line utility for pretty printing csv files.',
@@ -23,10 +28,6 @@ def parse_cli_arguments():
     parser.add_argument('--header', action='store_true',
         help='turn on header decoration')
     args = parser.parse_args()
-    justification_translator = {
-        'l': '<',
-        'r': '>'
-    }
     args.justify = justification_translator[args.justify]
     return args
 
@@ -47,13 +48,17 @@ def read_content(filename, max_rows, separator):
     return content, lengths
 
 def print_output(content, lengths, justification, decorator, header):
-    total_length = sum(lengths) + (len(lengths)-1)*len(justification)
+    total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
             output += '-'*total_length + '\n'
         for i in range(len(lengths)):
-            output += ('{:' + justification + '{width}}').format(row[i], width=lengths[i])
+            if i == 0:
+                justification_now = justification_translator['l']
+            else:
+                justification_now = justification
+            output += ('{:' + justification_now + '{width}}').format(row[i], width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
         if header and row_number == 0:
