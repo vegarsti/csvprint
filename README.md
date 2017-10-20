@@ -19,7 +19,7 @@ Widget name Size Price
 Compare to e.g.
 
 ```
-column -t -s ',' example.csv
+> column -t -s ',' example.csv
 Widget name  Size  Price
 Trinket      1000  80
 Doodad       10    8
