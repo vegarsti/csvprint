@@ -6,8 +6,8 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 justification_translator = {
-    'l': '<',
-    'r': '>'
+    'left': '<',
+    'right': '>'
 }
 
 parser = argparse.ArgumentParser(
@@ -27,8 +27,9 @@ def parse_cli_arguments():
         help='separator/delimiter used in the csv file\ndefault is ,')
     parser.add_argument('-r', '--rows', type=int, default=1000,
         help='number of rows to show\ndefault is 1000')
-    parser.add_argument('-j', '--justify', type=str, choices=('l', 'r'),
-        default='r', help='which justification to use \ndefault is r (right)')
+    parser.add_argument('-j', '--justify', type=str,
+        choices=justification_translator.keys(),
+        default='right', help='which justification to use \ndefault is r (right)')
     parser.add_argument('-d', '--decorator', type=str,
         default=' ', help='which string/decorator to use in spacing')
     parser.add_argument('--header', action='store_true',
@@ -49,20 +50,22 @@ def read_content(filename, max_rows, separator):
                 row_content = []
                 number_of_cells = len(row)
                 if number_of_cells != number_of_columns:
-                    print("Not a properly formatted csv file,\nor '{separator}' is an incorrect separator character.".format(
+                    parser.print_usage()
+                    print("csvprint: error: not a properly formatted csv file, or '{separator}' is an incorrect separator character".format(
                         separator=separator)
                     )
-                    print()
-                    print_usage_and_exit()
+                    exit()
                 if row_number < max_rows - 1:
                     for i, cell in enumerate(row):
                         lengths[i] = max(len(cell), lengths[i])
                         row_content.append(cell)
                     content.append(row_content)
     except FileNotFoundError:
-        print("File not found.")
-        print()
-        print_usage_and_exit()
+        parser.print_usage()
+        print("csvprint: error: no such file: {filename}".format(
+            filename=filename.split('/')[-1])
+        )
+        exit()
     lengths = [l for l in lengths]
     return content, lengths
 
