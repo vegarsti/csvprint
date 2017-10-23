@@ -1,10 +1,6 @@
 # `csvprint`
 
-## What?
 Command-line utility for pretty printing csv files.
-
-## Why?
-I needed to quickly look at some csv files, but the [UNIX utility `column`](https://linux.die.net/man/1/column) didn't solve my problem.
 
 ## Example
 
