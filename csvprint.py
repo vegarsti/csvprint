@@ -16,9 +16,10 @@ parser = argparse.ArgumentParser(
     prog='csvprint'
 )
 
-
-def print_usage_and_exit():
+def print_and_exit(message):
     parser.print_usage()
+    print("csvprint: error:", end=' ')
+    print(message)
     exit()
 
 def parse_cli_arguments():
@@ -50,8 +51,8 @@ def read_content(filename, max_rows, separator):
                 row_content = []
                 number_of_cells = len(row)
                 if number_of_cells != number_of_columns:
-                    parser.print_usage()
-                    print("csvprint: error: not a properly formatted csv file, or '{separator}' is an incorrect separator character".format(
+                    print_and_exit("not a properly formatted csv file, or "
+                        +"'{separator}' is an incorrect separator character".format(
                         separator=separator)
                     )
                     exit()
@@ -61,11 +62,9 @@ def read_content(filename, max_rows, separator):
                         row_content.append(cell)
                     content.append(row_content)
     except FileNotFoundError:
-        parser.print_usage()
-        print("csvprint: error: no such file: {filename}".format(
+        print_and_exit("no such file: {filename}".format(
             filename=filename.split('/')[-1])
         )
-        exit()
     lengths = [l for l in lengths]
     return content, lengths
 
