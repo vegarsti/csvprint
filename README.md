@@ -42,3 +42,4 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 * `-r` to specify number of rows to show (default is 1000)
 * `-j` to specify which justification to choose (left or right)
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
+* `--header` add line above and under the header
