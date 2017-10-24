@@ -34,9 +34,14 @@ def parse_cli_arguments():
     parser.add_argument('-d', '--decorator', type=str,
         default=' ', help='which string/decorator to use in spacing')
     parser.add_argument('--header', action='store_true',
-        help='turn on header decoration')
+        help='header decoration')
+    parser.add_argument('--fancy', action='store_true',
+        help='table decoration')
     args = parser.parse_args()
     args.justify = justification_translator[args.justify]
+    if args.fancy:
+        args.decorator = ' | '
+        args.header = True
     return args
 
 def read_content(filename, max_rows, separator):
@@ -68,7 +73,8 @@ def read_content(filename, max_rows, separator):
     lengths = [l for l in lengths]
     return content, lengths
 
-def print_output(content, lengths, justification, decorator, header):
+def print_output(content, lengths, justification, decorator, header,
+    fancy):
     total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
     number_of_columns = len(lengths)
     for row_number, row in enumerate(content):
@@ -88,6 +94,8 @@ def print_output(content, lengths, justification, decorator, header):
         if header and row_number == 0:
             output += '\n' + '-'*total_length
         print(output)
+    if fancy:
+        print('-'*total_length)
 
 def main():
     args = parse_cli_arguments()
@@ -96,7 +104,8 @@ def main():
         max_rows=args.rows,
         separator=args.separator
     )
-    print_output(content, lengths, args.justify, args.decorator, header=args.header)
+    print_output(content, lengths, args.justify, args.decorator, header=args.header,
+        fancy=args.fancy)
 
 if __name__ == '__main__':
     main()
