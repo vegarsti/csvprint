@@ -37,11 +37,15 @@ def parse_cli_arguments():
         help='header decoration')
     parser.add_argument('--fancy', action='store_true',
         help='table decoration')
+    parser.add_argument('-m', '--markdown', action='store_true',
+        help='markdown table')
     args = parser.parse_args()
     args.justify = justification_translator[args.justify]
     if args.fancy:
         args.decorator = ' | '
         args.header = True
+    if args.markdown:
+        args.decorator = ' | '
     return args
 
 def read_content(filename, max_rows, separator):
@@ -74,7 +78,7 @@ def read_content(filename, max_rows, separator):
     return content, lengths
 
 def print_output(content, lengths, justification, decorator, header,
-    fancy):
+    fancy, markdown):
     total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
     number_of_columns = len(lengths)
     for row_number, row in enumerate(content):
@@ -82,6 +86,8 @@ def print_output(content, lengths, justification, decorator, header,
         if header and row_number == 0:
             output += '-'*total_length + '\n'
         number_of_cells = len(row)
+        if markdown:
+            output += '|'
         for i in range(number_of_columns):
             if i == 0:
                 justification_now = justification_translator['left']
@@ -91,8 +97,21 @@ def print_output(content, lengths, justification, decorator, header,
                 width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
+        if markdown:
+            output += '|'
         if header and row_number == 0:
             output += '\n' + '-'*total_length
+        if markdown and row_number == 0:
+            output += '\n'
+            output += '|-'
+            for i, l in enumerate(lengths):
+                if i == 0:
+                    output += '-'*(l + len(decorator)-3)
+                elif i == number_of_columns - 1:
+                    output += '-'*(l + len(decorator)-2)
+                else:
+                    output += '-'*(l + len(decorator)-1)
+                output += '|'
         print(output)
     if fancy:
         print('-'*total_length)
@@ -105,7 +124,7 @@ def main():
         separator=args.separator
     )
     print_output(content, lengths, args.justify, args.decorator, header=args.header,
-        fancy=args.fancy)
+        fancy=args.fancy, markdown=args.markdown)
 
 if __name__ == '__main__':
     main()

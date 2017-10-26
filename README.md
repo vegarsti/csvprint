@@ -43,3 +43,4 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 * `-j` to specify which justification to choose (left or right)
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
 * `--header` add line above and under the header
+* `--markdown` produces a valid markdown table
