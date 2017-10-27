@@ -48,7 +48,7 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 ## Markdown example
 
 ```
->csvprint imdb.csv --markdown
+» csvprint imdb.csv --markdown
 Title                  | Release Year | Estimated Budget
 -----------------------|--------------|-----------------
 Shawshank Redemption   |         1994 |      $25 000 000
