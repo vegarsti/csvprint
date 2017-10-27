@@ -86,8 +86,6 @@ def print_output(content, lengths, justification, decorator, header,
         if header and row_number == 0:
             output += '-'*total_length + '\n'
         number_of_cells = len(row)
-        if markdown:
-            output += '|'
         for i in range(number_of_columns):
             if i == 0:
                 justification_now = justification_translator['left']
@@ -97,21 +95,19 @@ def print_output(content, lengths, justification, decorator, header,
                 width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
-        if markdown:
-            output += '|'
         if header and row_number == 0:
             output += '\n' + '-'*total_length
         if markdown and row_number == 0:
             output += '\n'
-            output += '|-'
             for i, l in enumerate(lengths):
                 if i == 0:
-                    output += '-'*(l + len(decorator)-3)
+                    output += '-'*(l + len(decorator)-2)
                 elif i == number_of_columns - 1:
                     output += '-'*(l + len(decorator)-2)
                 else:
                     output += '-'*(l + len(decorator)-1)
-                output += '|'
+                if i < number_of_columns - 1:
+                    output += '|'
         print(output)
     if fancy:
         print('-'*total_length)
