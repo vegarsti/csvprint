@@ -45,6 +45,8 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 * `--header` add line above and under the header
 * `--markdown` produces a valid markdown table
 
+## Markdown example
+
 ```
 >csvprint imdb.csv --markdown
 Title                  | Release Year | Estimated Budget
@@ -56,7 +58,7 @@ The Dark Knight        |         2008 |     $185 000 000
 12 Angry Men           |         1957 |         $350 000
 ```
 
-which when rendered as markdown looks like
+When rendered as markdown, this looks like
 
 Title                  | Release Year | Estimated Budget
 -----------------------|--------------|-----------------
