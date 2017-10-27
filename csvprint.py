@@ -4,21 +4,23 @@ from sys import exit
 
 import argparse
 from argparse import RawTextHelpFormatter
+from collections import OrderedDict as OD
 
-justification_translator = {
-    'left': '<',
-    'right': '>'
-}
+justification_translator = OD()
+justification_translator['left'] = '<'
+justification_translator['right'] = '>'
+
+script_name = 'csvprint'
 
 parser = argparse.ArgumentParser(
     description='Command line utility for pretty printing csv files.',
     formatter_class=RawTextHelpFormatter,
-    prog='csvprint'
+    prog=script_name
 )
 
 def print_and_exit(message):
     parser.print_usage()
-    print("csvprint: error:", end=' ')
+    print("%s: error:" % script_name, end=' ')
     print(message)
     exit()
 
@@ -30,14 +32,14 @@ def parse_cli_arguments():
         help='number of rows to show\ndefault is 1000')
     parser.add_argument('-j', '--justify', type=str,
         choices=justification_translator.keys(),
-        default='right', help='which justification to use \ndefault is r (right)')
+        default='right', help='which justification to use \ndefault is right')
     parser.add_argument('-d', '--decorator', type=str,
         default=' ', help='which string/decorator to use in spacing')
     parser.add_argument('--header', action='store_true',
         help='header decoration')
     parser.add_argument('--fancy', action='store_true',
         help='table decoration')
-    parser.add_argument('-m', '--markdown', action='store_true',
+    parser.add_argument('--markdown', action='store_true',
         help='markdown table')
     args = parser.parse_args()
     args.justify = justification_translator[args.justify]
