@@ -37,15 +37,10 @@ def parse_cli_arguments():
         default=' ', help='which string/decorator to use in spacing')
     parser.add_argument('--header', action='store_true',
         help='header decoration')
-    parser.add_argument('--fancy', action='store_true',
-        help='table decoration')
     parser.add_argument('--markdown', action='store_true',
         help='markdown table')
     args = parser.parse_args()
     args.justify = justification_translator[args.justify]
-    if args.fancy:
-        args.decorator = ' | '
-        args.header = True
     if args.markdown:
         args.decorator = ' | '
     return args
@@ -59,6 +54,8 @@ def read_content(filename, max_rows, separator):
             number_of_columns = len(lengths)
             content = [header]
             for row_number, row in enumerate(csvreader):
+                if row_number == max_rows - 1:
+                    break
                 row_content = []
                 number_of_cells = len(row)
                 if number_of_cells != number_of_columns:
@@ -67,11 +64,10 @@ def read_content(filename, max_rows, separator):
                         separator=separator)
                     )
                     exit()
-                if row_number < max_rows - 1:
-                    for i, cell in enumerate(row):
-                        lengths[i] = max(len(cell), lengths[i])
-                        row_content.append(cell)
-                    content.append(row_content)
+                for i, cell in enumerate(row):
+                    lengths[i] = max(len(cell), lengths[i])
+                    row_content.append(cell)
+                content.append(row_content)
     except FileNotFoundError:
         print_and_exit("no such file: {filename}".format(
             filename=filename.split('/')[-1])
@@ -79,8 +75,7 @@ def read_content(filename, max_rows, separator):
     lengths = [l for l in lengths]
     return content, lengths
 
-def print_output(content, lengths, justification, decorator, header,
-    fancy, markdown):
+def print_output(content, lengths, justification, decorator, header, markdown):
     total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
     number_of_columns = len(lengths)
     for row_number, row in enumerate(content):
@@ -111,8 +106,6 @@ def print_output(content, lengths, justification, decorator, header,
                 if i < number_of_columns - 1:
                     output += '|'
         print(output)
-    if fancy:
-        print('-'*total_length)
 
 def main():
     args = parse_cli_arguments()
@@ -122,7 +115,7 @@ def main():
         separator=args.separator
     )
     print_output(content, lengths, args.justify, args.decorator, header=args.header,
-        fancy=args.fancy, markdown=args.markdown)
+        markdown=args.markdown)
 
 if __name__ == '__main__':
     main()
