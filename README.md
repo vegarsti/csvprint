@@ -32,7 +32,7 @@ Clone the repo and add an alias for `python /path/to/csvprint/csvprint.py` to yo
 
 ```
 git clone https://github.com/vegarsti/csvprint.git ~/path/to/csvprint
-echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile`
+echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 ```
 
 ## Features
