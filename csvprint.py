@@ -28,7 +28,7 @@ def parse_cli_arguments():
     parser.add_argument('filename', type=str, help='file to pretty print')
     parser.add_argument('-s', '--separator', type=str, default=',',
         help='separator/delimiter used in the csv file\ndefault is ,')
-    parser.add_argument('-r', '--rows', type=int, default=1000,
+    parser.add_argument('-n', '--rows', type=int, default=1000,
         help='number of rows to show\ndefault is 1000')
     parser.add_argument('-j', '--justify', type=str,
         choices=justification_translator.keys(),

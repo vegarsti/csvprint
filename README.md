@@ -39,7 +39,7 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 `csvprint -h` prints a help message. By default, all columns except the left-most are right-justfied.
 
 * `-s` to specify delimiter (default is comma)
-* `-r` to specify number of rows to show (default is 1000)
+* `-n` to specify number of rows to show (default is 1000) (like with `head`, so e.g. `csvprint file.csv -n 10` is like `head -n 10`)
 * `-j` to specify which justification to choose (left or right)
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
 * `--header` add line above and under the header
