@@ -84,11 +84,7 @@ def print_output(content, lengths, justification, decorator, header, markdown):
             output += '-'*total_length + '\n'
         number_of_cells = len(row)
         for i in range(number_of_columns):
-            if i == 0:
-                justification_now = justification_translator['left']
-            else:
-                justification_now = justification
-            output += ('{:' + justification_now + '{width}}').format(row[i],
+            output += ('{:' + justification + '{width}}').format(row[i],
                 width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
