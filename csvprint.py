@@ -27,10 +27,10 @@ def print_and_exit(message):
 def parse_cli_arguments():
     parser.add_argument('filename', type=str, help='file to pretty print')
     parser.add_argument('-s', '--separator', type=str, default=',',
-        help='separator/delimiter used in the csv file\ndefault is ,')
+        help='separator/delimiter used in csv file\ndefault is comma')
     parser.add_argument('-n', '--rows', type=int, default=1000,
         help='number of rows to show\ndefault is 1000')
-    parser.add_argument('-j', '--justify', type=str,
+    parser.add_argument('--justify', type=str,
         choices=justification_translator.keys(),
         default='right', help='which justification to use \ndefault is right')
     parser.add_argument('-d', '--decorator', type=str,
@@ -38,7 +38,7 @@ def parse_cli_arguments():
     parser.add_argument('--header', action='store_true',
         help='header decoration')
     parser.add_argument('--markdown', action='store_true',
-        help='markdown table')
+        help='output valid markdown table')
     args = parser.parse_args()
     args.justify = justification_translator[args.justify]
     if args.markdown:
