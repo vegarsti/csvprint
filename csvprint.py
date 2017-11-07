@@ -32,7 +32,7 @@ def parse_cli_arguments():
         help='number of rows to show\ndefault is 1000')
     parser.add_argument('--justify', type=str,
         choices=justification_translator.keys(),
-        default='right', help='which justification to use \ndefault is right')
+        default='left', help='which justification to use \ndefault is left')
     parser.add_argument('-d', '--decorator', type=str,
         default=' ', help='which string/decorator to use in spacing')
     parser.add_argument('--header', action='store_true',
