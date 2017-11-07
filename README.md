@@ -23,6 +23,7 @@ Shawshank Redemption    1994          $25 000 000
 The Godfather           1972          $6 000 000
 The Godfather: Part II  1974          $13 000 000
 The Dark Knight         2008          $185 000 000
+12 Angry Men            1957          $350 000
 ```
 Creating an alias for `column -t -s ','` could work, but I found it a bit lacking, as it doesn't provide support for various justification or decoration.
 
