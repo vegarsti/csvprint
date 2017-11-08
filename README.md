@@ -41,10 +41,24 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 
 * `-s` to specify delimiter (default is comma)
 * `-n` to specify number of rows to show (default is 1000) (like with `head`, so e.g. `csvprint file.csv -n 10` is like `head -n 10`)
-* `--justify` to specify which justification to choose (left or right)
+* `--justify` to specify which justification to choose (left or right). Can provide one argument per column or just one argument
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
 * `--header` add line above and under the first line
 * `--markdown` produces a valid markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
+
+## Justification example
+
+```
+» csvprint imdb.csv --justify left right right
+OR
+» csvprint imdb.csv -j l r r
+Title                  Release Year Estimated Budget
+Shawshank Redemption           1994      $25 000 000
+The Godfather                  1972       $6 000 000
+The Godfather: Part II         1974      $13 000 000
+The Dark Knight                2008     $185 000 000
+12 Angry Men                   1957         $350 000
+```
 
 ## Markdown example
 

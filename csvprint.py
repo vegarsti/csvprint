@@ -9,6 +9,8 @@ from collections import OrderedDict as OD
 justification_translator = OD()
 justification_translator['left'] = '<'
 justification_translator['right'] = '>'
+justification_translator['l'] = '<'
+justification_translator['r'] = '>'
 
 script_name = 'csvprint'
 
@@ -30,9 +32,9 @@ def parse_cli_arguments():
         help='separator/delimiter used in csv file\ndefault is comma')
     parser.add_argument('-n', '--rows', type=int, default=1000,
         help='number of rows to show\ndefault is 1000')
-    parser.add_argument('--justify', type=str,
-        choices=justification_translator.keys(),
-        default='left', help='which justification to use \ndefault is left')
+    parser.add_argument('-j', '--justify', nargs='+',
+        default=['left'],
+        help='which justification to use\ndefault is left\nchoices: {left, right}\ncan provide a list, in which case one \nchoice for each column')
     parser.add_argument('-d', '--decorator', type=str,
         default=' ', help='which string/decorator to use in spacing')
     parser.add_argument('--header', action='store_true',
@@ -40,7 +42,6 @@ def parse_cli_arguments():
     parser.add_argument('--markdown', action='store_true',
         help='output valid markdown table')
     args = parser.parse_args()
-    args.justify = justification_translator[args.justify]
     if args.markdown:
         args.decorator = ' | '
     return args
@@ -78,13 +79,19 @@ def read_content(filename, max_rows, separator):
 def print_output(content, lengths, justification, decorator, header, markdown):
     total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
     number_of_columns = len(lengths)
+    if len(justification) == 1:
+        justification = [justification[0]]*number_of_columns
+    else:
+        if len(justification) != number_of_columns:
+            print_and_exit('number of justification arguments not equal number of columns')
+    justification = [justification_translator[j] for j in justification]
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
             output += '-'*total_length + '\n'
         number_of_cells = len(row)
         for i in range(number_of_columns):
-            output += ('{:' + justification + '{width}}').format(row[i],
+            output += ('{:' + justification[i] + '{width}}').format(row[i],
                 width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
