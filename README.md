@@ -85,5 +85,5 @@ The Dark Knight        |         2008 |     $185 000 000
 
 
 ## TODO: Planned features
-* If justification is provided in markdown case, fix markdown justification as well
+* Add centering justification
 * Choice of columns to show (if csv file is "wide")

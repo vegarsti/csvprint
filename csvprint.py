@@ -4,13 +4,18 @@ from sys import exit
 
 import argparse
 from argparse import RawTextHelpFormatter
-from collections import OrderedDict as OD
 
-justification_translator = OD()
-justification_translator['left'] = '<'
-justification_translator['right'] = '>'
-justification_translator['l'] = '<'
-justification_translator['r'] = '>'
+justification_translator = {
+    'left': '<',
+    'right': '>',
+    'l': '<',
+    'r': '>',
+}
+
+markdown_justification = {
+    'left': {'left': '-', 'right': '-'},
+    'right': {'left': '-', 'right': ':'},
+}
 
 script_name = 'csvprint'
 
@@ -84,7 +89,10 @@ def print_output(content, lengths, justification, decorator, header, markdown):
     else:
         if len(justification) != number_of_columns:
             print_and_exit('number of justification arguments not equal number of columns')
+    original_justification = justification
     justification = [justification_translator[j] for j in justification]
+    left = '-'
+    right = '-'
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
@@ -96,16 +104,19 @@ def print_output(content, lengths, justification, decorator, header, markdown):
             if i < len(lengths) - 1:
                 output += decorator
         if header and row_number == 0:
-            output += '\n' + '-'*total_length
+            output += '\n' + left + '-'*(total_length-1) + right
         if markdown and row_number == 0:
             output += '\n'
             for i, l in enumerate(lengths):
-                if i == 0:
-                    output += '-'*(l + len(decorator)-2)
-                elif i == number_of_columns - 1:
-                    output += '-'*(l + len(decorator)-2)
+                current = original_justification[i]
+                print(current)
+                md = markdown_justification[current]
+                left = md['left']
+                right = md['right']
+                if i == 0 or i == number_of_columns - 1:
+                    output += left + '-'*(l+len(decorator)-4) + right
                 else:
-                    output += '-'*(l + len(decorator)-1)
+                    output += left + '-'*(l + len(decorator)-3) + right
                 if i < number_of_columns - 1:
                     output += '|'
         print(output)
