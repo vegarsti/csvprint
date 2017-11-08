@@ -82,3 +82,8 @@ The Godfather          |         1972 |       $6 000 000
 The Godfather: Part II |         1974 |      $13 000 000
 The Dark Knight        |         2008 |     $185 000 000
 12 Angry Men           |         1957 |         $350 000
+
+
+## TODO: Planned features
+* If justification is provided in markdown case, fix markdown justification as well
+* Choice of columns to show (if csv file is "wide")
