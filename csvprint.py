@@ -109,7 +109,6 @@ def print_output(content, lengths, justification, decorator, header, markdown):
             output += '\n'
             for i, l in enumerate(lengths):
                 current = original_justification[i]
-                print(current)
                 md = markdown_justification[current]
                 left = md['left']
                 right = md['right']

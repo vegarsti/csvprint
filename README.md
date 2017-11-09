@@ -63,26 +63,25 @@ The Dark Knight                2008     $185 000 000
 ## Markdown example
 
 ```
-» csvprint imdb.csv --markdown --justify right
-                 Title | Release Year | Estimated Budget
+» csvprint imdb.csv --markdown
+Title                  | Release Year | Estimated Budget
 -----------------------|--------------|-----------------
-  Shawshank Redemption |         1994 |      $25 000 000
-         The Godfather |         1972 |       $6 000 000
-The Godfather: Part II |         1974 |      $13 000 000
-       The Dark Knight |         2008 |     $185 000 000
-          12 Angry Men |         1957 |         $350 000
+Shawshank Redemption   | 1994         | $25 000 000
+The Godfather          | 1972         | $6 000 000
+The Godfather: Part II | 1974         | $13 000 000
+The Dark Knight        | 2008         | $185 000 000
+12 Angry Men           | 1957         | $350 000
 ```
 
 When rendered as markdown, this looks like
 
 Title                  | Release Year | Estimated Budget
 -----------------------|--------------|-----------------
-Shawshank Redemption   |         1994 |      $25 000 000
-The Godfather          |         1972 |       $6 000 000
-The Godfather: Part II |         1974 |      $13 000 000
-The Dark Knight        |         2008 |     $185 000 000
-12 Angry Men           |         1957 |         $350 000
-
+Shawshank Redemption   | 1994         | $25 000 000
+The Godfather          | 1972         | $6 000 000
+The Godfather: Part II | 1974         | $13 000 000
+The Dark Knight        | 2008         | $185 000 000
+12 Angry Men           | 1957         | $350 000
 
 ## TODO: Planned features
 * Add centering justification
