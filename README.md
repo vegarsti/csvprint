@@ -37,14 +37,15 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 ```
 
 ## Features
-`csvprint -h` prints a help message. By default, all columns except the left-most are right-justfied.
+`csvprint -h` or `csvprint --help` prints a help message:
 
+### Flags
+* `--markdown` produces a valid markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
 * `-s` to specify delimiter (default is comma)
 * `-n` to specify number of rows to show (default is 1000) (like with `head`, so e.g. `csvprint file.csv -n 10` is like `head -n 10`)
-* `--justify` to specify which justification to choose (left or right). Can provide one argument per column or just one argument
+* `j` or `--justify` to specify which justification to choose (left or right). Can provide one argument per column or just one argument.
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
-* `--header` add line above and under the first line
-* `--markdown` produces a valid markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
+* `--header` add border around and the header (first line)
 
 ## Justification example
 
@@ -86,3 +87,35 @@ The Dark Knight        | 2008         | $185 000 000
 ## TODO: Planned features
 * Add centering justification
 * Choice of columns to show (if csv file is "wide")
+
+## Help message
+
+```
+» csvprint -h
+usage: csvprint [-h] [-s SEPARATOR] [-n ROWS] [-j JUSTIFY [JUSTIFY ...]]
+                [-d DECORATOR] [--header] [--markdown]
+                filename
+
+Command line utility for pretty printing csv files.
+
+positional arguments:
+  filename              file to pretty print
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SEPARATOR, --separator SEPARATOR
+                        separator/delimiter used in csv file
+                        default is comma
+  -n ROWS, --rows ROWS  number of rows to show
+                        default is 1000
+  -j JUSTIFY [JUSTIFY ...], --justify JUSTIFY [JUSTIFY ...]
+                        which justification to use
+                        default is left
+                        choices: {left, right}
+                        can provide a list, in which case one
+                        choice for each column
+  -d DECORATOR, --decorator DECORATOR
+                        which string/decorator to use in spacing
+  --header              header decoration
+  --markdown            output valid markdown table
+```
