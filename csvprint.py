@@ -1,9 +1,6 @@
-import csv
-
-from sys import exit
-
 import argparse
-from argparse import RawTextHelpFormatter
+import csv
+import sys
 
 justification_translator = {
     'left': '<',
@@ -12,16 +9,17 @@ justification_translator = {
     'r': '>',
 }
 
-markdown_justification = {
-    'left': {'left': '-', 'right': '-'},
-    'right': {'left': '-', 'right': ':'},
-}
+def markdown_justification(direction, suffix=False):
+    if direction == 'right' or direction == 'r':
+        return '-', ':'
+    else:
+        return '-', '-'
 
 script_name = 'csvprint'
 
 parser = argparse.ArgumentParser(
     description='Command line utility for pretty printing csv files.',
-    formatter_class=RawTextHelpFormatter,
+    formatter_class=argparse.RawTextHelpFormatter,
     prog=script_name
 )
 
@@ -29,7 +27,7 @@ def print_and_exit(message):
     parser.print_usage()
     print("%s: error:" % script_name, end=' ')
     print(message)
-    exit()
+    sys.exit()
 
 def parse_cli_arguments():
     parser.add_argument('filename', type=str, help='file to pretty print')
@@ -75,9 +73,7 @@ def read_content(filename, max_rows, separator):
                     row_content.append(cell)
                 content.append(row_content)
     except FileNotFoundError:
-        print_and_exit("no such file: {filename}".format(
-            filename=filename.split('/')[-1])
-        )
+        print_and_exit("no such file: {filename}".format(filename=filename))
     lengths = [l for l in lengths]
     return content, lengths
 
@@ -89,36 +85,41 @@ def print_output(content, lengths, justification, decorator, header, markdown):
     else:
         if len(justification) != number_of_columns:
             print_and_exit('number of justification arguments not equal number of columns')
-    original_justification = justification
-    justification = [justification_translator[j] for j in justification]
-    left = '-'
-    right = '-'
+    try:
+        py_justification = [justification_translator[j] for j in justification]
+    except KeyError:
+        print_and_exit("incorrect justification option: %s" % justification[0] + '\n'
+                       + "options: l/left for left and r/right for right")
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
             output += '-'*total_length + '\n'
         number_of_cells = len(row)
         for i in range(number_of_columns):
-            output += ('{:' + justification[i] + '{width}}').format(row[i],
+            output += ('{:' + py_justification[i] + '{width}}').format(row[i],
                 width=lengths[i])
             if i < len(lengths) - 1:
                 output += decorator
         if header and row_number == 0:
-            output += '\n' + left + '-'*(total_length-1) + right
+            output += '\n' + '-'*(total_length)
         if markdown and row_number == 0:
-            output += '\n'
-            for i, l in enumerate(lengths):
-                current = original_justification[i]
-                md = markdown_justification[current]
-                left = md['left']
-                right = md['right']
-                if i == 0 or i == number_of_columns - 1:
-                    output += left + '-'*(l+len(decorator)-4) + right
-                else:
-                    output += left + '-'*(l + len(decorator)-3) + right
-                if i < number_of_columns - 1:
-                    output += '|'
+            output += add_markdown_styling(row_number, lengths,
+                justification, number_of_columns, decorator)
         print(output)
+
+def add_markdown_styling(row_number, lengths, justification, number_of_columns, decorator):
+    output = '\n'
+    for i, l in enumerate(lengths):
+        current = justification[i]
+        md_prefix, md_suffix = markdown_justification(current)
+        offset = 3
+        if i == 0 or i == number_of_columns - 1:
+            offset = 4
+        output += md_prefix + '-'*(l+len(decorator)-offset) + md_suffix
+        if i < number_of_columns - 1:
+            output += '|'
+    return output
+
 
 def main():
     args = parse_cli_arguments()
