@@ -37,7 +37,6 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 ```
 
 ## Features
-`csvprint -h` or `csvprint --help` prints a help message:
 
 ### Flags
 * `--markdown` produces a valid markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
@@ -50,8 +49,6 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 ## Justification example
 
 ```
-» csvprint imdb.csv --justify left right right
-OR
 » csvprint imdb.csv -j l r r
 Title                  Release Year Estimated Budget
 Shawshank Redemption           1994      $25 000 000
@@ -84,11 +81,8 @@ The Godfather: Part II | 1974         | $13 000 000
 The Dark Knight        | 2008         | $185 000 000
 12 Angry Men           | 1957         | $350 000
 
-## TODO: Planned features
-* Add centering justification
-* Choice of columns to show (if csv file is "wide")
-
 ## Help message
+`csvprint -h` or `csvprint --help` prints a help message:
 
 ```
 » csvprint -h
