@@ -36,15 +36,14 @@ git clone https://github.com/vegarsti/csvprint.git ~/path/to/csvprint
 echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 ```
 
-## Features
+## Flags
 
-### Flags
 * `--markdown` produces a valid markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
 * `-s` to specify delimiter (default is comma)
 * `-n` to specify number of rows to show (default is 1000) (like with `head`, so e.g. `csvprint file.csv -n 10` is like `head -n 10`)
 * `j` or `--justify` to specify which justification to choose (left or right). Can provide one argument per column or just one argument.
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
-* `--header` add border around and the header (first line)
+* `--header` add border around the header (first line)
 
 ## Justification example
 
