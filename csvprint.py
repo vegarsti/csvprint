@@ -1,6 +1,7 @@
 import argparse
 import csv
 import sys
+from itertools import islice
 
 justification_translator = {
     'left': '<',
@@ -57,9 +58,7 @@ def read_content(filename, max_rows, separator):
             lengths = [len(cell) for cell in list(header)]
             number_of_columns = len(lengths)
             content = [header]
-            for row_number, row in enumerate(csvreader):
-                if row_number == max_rows - 1:
-                    break
+            for row_number, row in enumerate(islice(csvreader, max_rows)):
                 row_content = []
                 number_of_cells = len(row)
                 if number_of_cells != number_of_columns:
