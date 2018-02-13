@@ -53,29 +53,25 @@ def parse_cli_arguments(use_stdin_as_file=False):
         args.decorator = ' | '
     return args
 
-def read_content(filename, max_rows, separator):
-    try:
-        with open(filename, 'r') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=separator)
-            header = next(csvreader)
-            lengths = [len(cell) for cell in list(header)]
-            number_of_columns = len(lengths)
-            content = [header]
-            for row_number, row in enumerate(islice(csvreader, max_rows)):
-                row_content = []
-                number_of_cells = len(row)
-                if number_of_cells != number_of_columns:
-                    print_and_exit("not a properly formatted csv file, or "
-                        +"'{separator}' is an incorrect separator character".format(
-                        separator=separator)
-                    )
-                    exit()
-                for i, cell in enumerate(row):
-                    lengths[i] = max(len(cell), lengths[i])
-                    row_content.append(cell)
-                content.append(row_content)
-    except FileNotFoundError:
-        print_and_exit("no such file: {filename}".format(filename=filename))
+def read_content(csvfile, max_rows, separator):        
+    csvreader = csv.reader(csvfile, delimiter=separator)
+    header = next(csvreader)
+    lengths = [len(cell) for cell in list(header)]
+    number_of_columns = len(lengths)
+    content = [header]
+    for row_number, row in enumerate(islice(csvreader, max_rows)):
+        row_content = []
+        number_of_cells = len(row)
+        if number_of_cells != number_of_columns:
+            print_and_exit("not a properly formatted csv file, or "
+                +"'{separator}' is an incorrect separator character".format(
+                separator=separator)
+            )
+            exit()
+        for i, cell in enumerate(row):
+            lengths[i] = max(len(cell), lengths[i])
+            row_content.append(cell)
+        content.append(row_content)
     lengths = [l for l in lengths]
     return content, lengths
 
@@ -129,7 +125,7 @@ def main():
     # If we are not running in a TTY _and_ there is no input file, we can assume
     # that we were piped into. Read from stdin instead of from a file.
     if not sys.stdin.isatty() and args.filename == None:
-        args.filename = sys.stdin
+        csvfile = sys.stdin
 
     # Since the filename is (strictly speaking) optional, we have to check that
     # it's present. Print usage and exit if not.
@@ -140,8 +136,16 @@ def main():
         print("csvprint: error: the following arguments are required: filename")
         return
 
+    # File given, and in tty, run in normal mode. Try to open file, exit on error.
+    else:
+        try:
+            csvfile = open(args.filename, 'r')
+
+        except FileNotFoundError:
+            print_and_exit("no such file: {filename}".format(filename=filename))
+
     content, lengths = read_content(
-        filename=args.filename,
+        csvfile=csvfile,
         max_rows=args.rows,
         separator=args.separator
     )
