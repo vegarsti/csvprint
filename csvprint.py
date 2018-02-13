@@ -152,5 +152,8 @@ def main():
     print_output(content, lengths, args.justify, args.decorator, header=args.header,
         markdown=args.markdown)
 
+    if not csvfile == sys.stdin:
+        csvfile.close()
+
 if __name__ == '__main__':
     main()
