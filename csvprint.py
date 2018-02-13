@@ -32,8 +32,9 @@ def print_and_exit(message):
     print(message)
     sys.exit()
 
-def parse_cli_arguments():
-    parser.add_argument('filename', type=str, help='file to pretty print')
+def parse_cli_arguments(use_stdin_as_file=False):
+    parser.add_argument('filename', type=str, help='file to pretty print', nargs='?')
+
     parser.add_argument('-s', '--separator', type=str, default=',',
         help='separator/delimiter used in csv file\ndefault is comma')
     parser.add_argument('-n', '--rows', type=int, default=1000,
@@ -124,6 +125,21 @@ def add_markdown_styling(row_number, lengths, justification, number_of_columns, 
 
 def main():
     args = parse_cli_arguments()
+
+    # If we are not running in a TTY _and_ there is no input file, we can assume
+    # that we were piped into. Read from stdin instead of from a file.
+    if not sys.stdin.isatty() and args.filename == None:
+        args.filename = sys.stdin
+
+    # Since the filename is (strictly speaking) optional, we have to check that
+    # it's present. Print usage and exit if not.
+    elif args.filename == None:
+        parser.print_usage()
+
+        # Hard code this error message, ugh
+        print("csvprint: error: the following arguments are required: filename")
+        return
+
     content, lengths = read_content(
         filename=args.filename,
         max_rows=args.rows,
