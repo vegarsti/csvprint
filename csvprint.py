@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import argparse
 import csv
 import sys
@@ -30,8 +32,9 @@ def print_and_exit(message):
     print(message)
     sys.exit()
 
-def parse_cli_arguments():
-    parser.add_argument('filename', type=str, help='file to pretty print')
+def parse_cli_arguments(use_stdin_as_file=False):
+    parser.add_argument('filename', type=str, help='file to pretty print', nargs='?')
+
     parser.add_argument('-s', '--separator', type=str, default=',',
         help='separator/delimiter used in csv file\ndefault is comma')
     parser.add_argument('-n', '--rows', type=int, default=1000,
@@ -50,29 +53,25 @@ def parse_cli_arguments():
         args.decorator = ' | '
     return args
 
-def read_content(filename, max_rows, separator):
-    try:
-        with open(filename, 'r') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=separator)
-            header = next(csvreader)
-            lengths = [len(cell) for cell in list(header)]
-            number_of_columns = len(lengths)
-            content = [header]
-            for row_number, row in enumerate(islice(csvreader, max_rows)):
-                row_content = []
-                number_of_cells = len(row)
-                if number_of_cells != number_of_columns:
-                    print_and_exit("not a properly formatted csv file, or "
-                        +"'{separator}' is an incorrect separator character".format(
-                        separator=separator)
-                    )
-                    exit()
-                for i, cell in enumerate(row):
-                    lengths[i] = max(len(cell), lengths[i])
-                    row_content.append(cell)
-                content.append(row_content)
-    except FileNotFoundError:
-        print_and_exit("no such file: {filename}".format(filename=filename))
+def read_content(csvfile, max_rows, separator):        
+    csvreader = csv.reader(csvfile, delimiter=separator)
+    header = next(csvreader)
+    lengths = [len(cell) for cell in list(header)]
+    number_of_columns = len(lengths)
+    content = [header]
+    for row_number, row in enumerate(islice(csvreader, max_rows)):
+        row_content = []
+        number_of_cells = len(row)
+        if number_of_cells != number_of_columns:
+            print_and_exit("not a properly formatted csv file, or "
+                +"'{separator}' is an incorrect separator character".format(
+                separator=separator)
+            )
+            exit()
+        for i, cell in enumerate(row):
+            lengths[i] = max(len(cell), lengths[i])
+            row_content.append(cell)
+        content.append(row_content)
     lengths = [l for l in lengths]
     return content, lengths
 
@@ -122,13 +121,39 @@ def add_markdown_styling(row_number, lengths, justification, number_of_columns, 
 
 def main():
     args = parse_cli_arguments()
+
+    # If we are not running in a TTY _and_ there is no input file, we can assume
+    # that we were piped into. Read from stdin instead of from a file.
+    if not sys.stdin.isatty() and args.filename == None:
+        csvfile = sys.stdin
+
+    # Since the filename is (strictly speaking) optional, we have to check that
+    # it's present. Print usage and exit if not.
+    elif args.filename == None:
+        parser.print_usage()
+
+        # Hard code this error message, ugh
+        print("csvprint: error: the following arguments are required: filename")
+        return
+
+    # File given, and in tty, run in normal mode. Try to open file, exit on error.
+    else:
+        try:
+            csvfile = open(args.filename, 'r')
+
+        except FileNotFoundError:
+            print_and_exit("no such file: {filename}".format(filename=filename))
+
     content, lengths = read_content(
-        filename=args.filename,
+        csvfile=csvfile,
         max_rows=args.rows,
         separator=args.separator
     )
     print_output(content, lengths, args.justify, args.decorator, header=args.header,
         markdown=args.markdown)
+
+    if not csvfile == sys.stdin:
+        csvfile.close()
 
 if __name__ == '__main__':
     main()
