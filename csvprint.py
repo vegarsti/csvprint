@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/local/bin/python3
 
 import argparse
 import csv
@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser(
     prog=script_name
 )
 
-def print_and_exit(message):
+def print_message_and_exit(message):
     parser.print_usage()
     print("%s: error:" % script_name, end=' ')
     print(message)
@@ -63,7 +63,7 @@ def read_content(csvfile, max_rows, separator):
         row_content = []
         number_of_cells = len(row)
         if number_of_cells != number_of_columns:
-            print_and_exit("not a properly formatted csv file, or "
+            print_message_and_exit("not a properly formatted csv file, or "
                 +"'{separator}' is an incorrect separator character".format(
                 separator=separator)
             )
@@ -82,11 +82,11 @@ def print_output(content, lengths, justification, decorator, header, markdown):
         justification = [justification[0]]*number_of_columns
     else:
         if len(justification) != number_of_columns:
-            print_and_exit('number of justification arguments not equal number of columns')
+            print_message_and_exit('number of justification arguments not equal number of columns')
     try:
         py_justification = [justification_translator[j] for j in justification]
     except KeyError:
-        print_and_exit("incorrect justification option: %s" % justification[0] + '\n'
+        print_message_and_exit("incorrect justification option: %s" % justification[0] + '\n'
                        + "options: l/left for left and r/right for right")
     for row_number, row in enumerate(content):
         output = ''
@@ -130,10 +130,7 @@ def main():
     # Since the filename is (strictly speaking) optional, we have to check that
     # it's present. Print usage and exit if not.
     elif args.filename == None:
-        parser.print_usage()
-
-        # Hard code this error message, ugh
-        print("csvprint: error: the following arguments are required: filename")
+        print_message_and_exit("the following arguments are required: filename")
         return
 
     # File given, and in tty, run in normal mode. Try to open file, exit on error.
@@ -142,7 +139,7 @@ def main():
             csvfile = open(args.filename, 'r')
 
         except FileNotFoundError:
-            print_and_exit("no such file: {filename}".format(filename=filename))
+            print_message_and_exit("no such file: {filename}".format(filename=filename))
 
     content, lengths = read_content(
         csvfile=csvfile,
