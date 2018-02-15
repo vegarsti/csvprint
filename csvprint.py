@@ -141,6 +141,9 @@ def main():
         except FileNotFoundError:
             print_message_and_exit("no such file: {filename}".format(filename=filename))
 
+    if args.rows <= 0:
+        print_message_and_exit("argument -n/--rows must be a positive integer")
+
     content, lengths = read_content(
         csvfile=csvfile,
         max_rows=args.rows,
