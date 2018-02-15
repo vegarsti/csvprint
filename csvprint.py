@@ -49,9 +49,9 @@ def parse_cli_arguments(use_stdin_as_file=False):
         help='header decoration')
     parser.add_argument('--markdown', action='store_true',
         help='output valid markdown table')
-    args = parser.parse_args()
-    if args.markdown:
-        args.decorator = ' | '
+    args = vars(parser.parse_args())
+    if args['markdown']:
+        args['decorator'] = ' | '
     return args
 
 def read_content(csvfile, max_rows, separator):        
@@ -124,33 +124,33 @@ def main():
 
     # If we are not running in a TTY _and_ there is no input file, we can assume
     # that we were piped into. Read from stdin instead of from a file.
-    if not sys.stdin.isatty() and args.filename == None:
+    if not sys.stdin.isatty() and args['filename'] == None:
         csvfile = sys.stdin
 
     # Since the filename is (strictly speaking) optional, we have to check that
     # it's present. Print usage and exit if not.
-    elif args.filename == None:
+    elif args['filename'] == None:
         print_message_and_exit("the following arguments are required: filename")
         return
 
     # File given, and in tty, run in normal mode. Try to open file, exit on error.
     else:
         try:
-            csvfile = open(args.filename, 'r')
+            csvfile = open(args['filename'], 'r')
 
         except FileNotFoundError:
             print_message_and_exit("no such file: {filename}".format(filename=filename))
 
-    if args.rows <= 0:
+    if args['rows'] <= 0:
         print_message_and_exit("argument -n/--rows must be a positive integer")
 
     content, lengths = read_content(
         csvfile=csvfile,
-        max_rows=args.rows,
-        separator=args.separator
+        max_rows=args['rows'],
+        separator=args['separator']
     )
-    print_output(content, lengths, args.justify, args.decorator, header=args.header,
-        markdown=args.markdown)
+    print_output(content, lengths, args['justify'], args['decorator'], header=args['header'],
+        markdown=args['markdown'])
 
     if not csvfile == sys.stdin:
         csvfile.close()
