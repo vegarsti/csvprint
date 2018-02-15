@@ -14,9 +14,10 @@ justification_translator = {
 
 def markdown_justification(direction, suffix=False):
     if direction == 'right' or direction == 'r':
-        return '-', ':'
+        left, right = '-', ':'
     else:
-        return '-', '-'
+        left, right = '-', '-'
+    return left, right
 
 script_name = 'csvprint'
 
@@ -37,8 +38,8 @@ def parse_cli_arguments(use_stdin_as_file=False):
 
     parser.add_argument('-s', '--separator', type=str, default=',',
         help='separator/delimiter used in csv file\ndefault is comma')
-    parser.add_argument('-n', '--rows', type=int, default=1000,
-        help='number of rows to show\ndefault is 1000')
+    parser.add_argument('-n', '--rows', type=int, default=sys.maxsize,
+        help='number of rows to show')
     parser.add_argument('-j', '--justify', nargs='+',
         default=['left'],
         help='which justification to use\ndefault is left\nchoices: {left, right}\ncan provide a list, in which case one \nchoice for each column')
@@ -67,7 +68,6 @@ def read_content(csvfile, max_rows, separator):
                 +"'{separator}' is an incorrect separator character".format(
                 separator=separator)
             )
-            exit()
         for i, cell in enumerate(row):
             lengths[i] = max(len(cell), lengths[i])
             row_content.append(cell)
