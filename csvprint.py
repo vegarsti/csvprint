@@ -5,12 +5,13 @@ import csv
 import sys
 from itertools import islice
 
-justification_translator = {
-    'left': '<',
-    'right': '>',
-    'l': '<',
-    'r': '>',
-}
+def justification_translator(direction):
+    if direction == 'left' or direction == 'l':
+        return '<'
+    elif direction == 'right' or direction == 'r':
+        return '>'
+    else:
+        raise ValueError
 
 def markdown_justification(direction, suffix=False):
     if direction == 'right' or direction == 'r':
@@ -29,7 +30,7 @@ parser = argparse.ArgumentParser(
 
 def print_message_and_exit(message):
     parser.print_usage()
-    print("%s: error:" % script_name, end=' ')
+    print(f"{script_name}: error:", end=' ')
     print(message)
     sys.exit()
 
@@ -75,19 +76,21 @@ def read_content(csvfile, max_rows, separator):
     lengths = [l for l in lengths]
     return content, lengths
 
-def print_output(content, lengths, justification, decorator, header, markdown):
+def get_output(content, lengths, justification, decorator, header, markdown):
     total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
     number_of_columns = len(lengths)
     if len(justification) == 1:
         justification = [justification[0]]*number_of_columns
-    else:
-        if len(justification) != number_of_columns:
-            print_message_and_exit('number of justification arguments not equal number of columns')
+    elif len(justification) != number_of_columns:
+        print_message_and_exit('number of justification arguments not equal number of columns')
     try:
-        py_justification = [justification_translator[j] for j in justification]
-    except KeyError:
-        print_message_and_exit("incorrect justification option: %s" % justification[0] + '\n'
-                       + "options: l/left for left and r/right for right")
+        py_justification = [justification_translator(j) for j in justification]
+    except ValueError:
+        print_message_and_exit(
+            f"incorrect justification option: {justification[0]}\n" +
+            "options: l/left for left and r/right for right"
+        )
+    total_output = ''
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
@@ -101,15 +104,17 @@ def print_output(content, lengths, justification, decorator, header, markdown):
         if header and row_number == 0:
             output += '\n' + '-'*(total_length)
         if markdown and row_number == 0:
-            output += add_markdown_styling(row_number, lengths,
-                justification, number_of_columns, decorator)
-        print(output)
+            output += add_markdown_styling(
+                row_number, lengths, justification,
+                number_of_columns, decorator
+            )
+        total_output += output + '\n'
+    return total_output
 
 def add_markdown_styling(row_number, lengths, justification, number_of_columns, decorator):
     output = '\n'
     for i, l in enumerate(lengths):
-        current = justification[i]
-        md_prefix, md_suffix = markdown_justification(current)
+        md_prefix, md_suffix = markdown_justification(justification[i])
         offset = 3
         if i == 0 or i == number_of_columns - 1:
             offset = 4
@@ -122,38 +127,31 @@ def add_markdown_styling(row_number, lengths, justification, number_of_columns, 
 def main():
     args = parse_cli_arguments()
 
-    # If we are not running in a TTY _and_ there is no input file, we can assume
-    # that we were piped into. Read from stdin instead of from a file.
+    if args['rows'] <= 0:
+        print_message_and_exit("argument -n/--rows must be a positive integer")
+
     if not sys.stdin.isatty() and args['filename'] == None:
         csvfile = sys.stdin
-
-    # Since the filename is (strictly speaking) optional, we have to check that
-    # it's present. Print usage and exit if not.
     elif args['filename'] == None:
         print_message_and_exit("the following arguments are required: filename")
-        return
-
-    # File given, and in tty, run in normal mode. Try to open file, exit on error.
     else:
         try:
             csvfile = open(args['filename'], 'r')
-
         except FileNotFoundError:
-            print_message_and_exit("no such file: {filename}".format(filename=filename))
-
-    if args['rows'] <= 0:
-        print_message_and_exit("argument -n/--rows must be a positive integer")
+            print_message_and_exit(f"no such file: {filename}")
 
     content, lengths = read_content(
         csvfile=csvfile,
         max_rows=args['rows'],
         separator=args['separator']
     )
-    print_output(content, lengths, args['justify'], args['decorator'], header=args['header'],
-        markdown=args['markdown'])
-
     if not csvfile == sys.stdin:
         csvfile.close()
+    output = get_output(
+        content, lengths, args['justify'], args['decorator'],
+        header=args['header'], markdown=args['markdown']
+    )
+    print(output)
 
 if __name__ == '__main__':
     main()
