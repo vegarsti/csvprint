@@ -116,9 +116,10 @@ def store_content(args):
     csvreader = csv.reader(csvfile, delimiter=separator)
     header = next(csvreader)
     widths = [len(cell) for cell in list(header)]
-    number_of_columns = len(widths)
+    args['number_of_columns'] = len(widths)
+    number_of_columns = args['number_of_columns']
     args['content'] = [header]
-    for row_number, row in enumerate(islice(csvreader, max_rows)):
+    for row_number, row in enumerate(islice(csvreader, max_rows - 1)):
         row_content = []
         number_of_cells = len(row)
         if number_of_cells != number_of_columns:
@@ -131,8 +132,7 @@ def store_content(args):
             widths[i] = max(len(cell), widths[i])
             row_content.append(cell)
         args['content'].append(row_content)
-    if max_rows == sys.maxsize:
-        args['rows'] = row_number + 2
+    args['rows'] = row_number + 1
     args['widths'] = [l for l in widths]
     widths, decorator = args['widths'], args['decorator']
     args['total_width'] = sum(widths) + (len(widths)-1)*len(decorator)
@@ -171,20 +171,20 @@ def get_output(args):
         if header and row_number == 0:
             output += '\n' + '-'*(total_width)
         if markdown and row_number == 0:
-            output += add_markdown_styling(
-                row_number, widths, justification,
-                number_of_columns, decorator
-            )
+            output += add_markdown_styling(args)
         total_output += output
-        if row_number < args['rows'] - 1:
+        if row_number < args['rows']:
             total_output += '\n'
     if not args['csvfile'] == sys.stdin:
         args['csvfile'].close()
     return total_output
 
-def add_markdown_styling(row_number, widths, justification, number_of_columns, decorator):
+def add_markdown_styling(args):
+    justification = args['justify']
+    number_of_columns = args['number_of_columns']
+    decorator = args['decorator']
     output = '\n'
-    for i, l in enumerate(widths):
+    for i, l in enumerate(args['widths']):
         md_prefix, md_suffix = args['md_prefix'], args['md_suffix']
         offset = 3
         if i == 0 or i == number_of_columns - 1:
@@ -193,7 +193,6 @@ def add_markdown_styling(row_number, widths, justification, number_of_columns, d
         if i < number_of_columns - 1:
             output += '|'
     return output
-
 
 def main():
     parser = create_parser()
