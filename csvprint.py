@@ -6,15 +6,15 @@ import sys
 from itertools import islice
 
 def justification_translator(direction):
-    if direction == 'left' or direction == 'l':
+    if direction == 'l':
         return '<'
-    elif direction == 'right' or direction == 'r':
+    elif direction == 'r':
         return '>'
     else:
         raise ValueError
 
 def markdown_justification(direction):
-    if direction == 'right' or direction == 'r':
+    if direction == 'r':
         right_character = ':'
     else:
         right_character = '-'
@@ -58,8 +58,8 @@ def create_parser():
         '-j',
         '--justify',
         nargs='+',
-        default=['left'],
-        help='which justification to use\ndefault is left\nchoices: {left, right}\ncan provide a list, in which case one \nchoice for each column',
+        default=['l'],
+        help='which justification to use\ndefault is left\nchoices: {l, r}\ncan provide a list, in which case one \nchoice for each column',
     )
     parser.add_argument(
         '-d',

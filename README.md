@@ -14,19 +14,6 @@ The Dark Knight        2008         $185 000 000
 12 Angry Men           1957         $350 000
 ```
 
-Compare to e.g.
-
-```
-» column -t -s ',' imdb.csv
-Title                   Release Year  Estimated Budget
-Shawshank Redemption    1994          $25 000 000
-The Godfather           1972          $6 000 000
-The Godfather: Part II  1974          $13 000 000
-The Dark Knight         2008          $185 000 000
-12 Angry Men            1957          $350 000
-```
-Creating an alias for `column -t -s ','` could work, but I found it a bit lacking, as it doesn't provide support for various justification or decoration.
-
 You can also pipe output from other programs to csvprint to format the output:
 ```
 » cat imdb.csv | csvprint
@@ -49,14 +36,16 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 
 ## Flags
 
-* `--markdown` produces a valid markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
-* `-s` to specify delimiter (default is comma)
-* `-n` to specify number of rows to show (default is 1000) (like with `head`, so e.g. `csvprint file.csv -n 10` is like `head -n 10`)
-* `j` or `--justify` to specify which justification to choose (left or right). Can provide one argument per column or just one argument.
+* `--markdown` produces a markdown table. If you just want this, though, you should probably use [`csvtomd`](https://github.com/mplewis/csvtomd).
+* `-s` to specify delimiter (default is comma), in case of e.g. a tab-separated file
+* `-n` to specify number of rows to show
+* `j` or `--justify` to specify justification (left or right). See examples below
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
 * `--header` add border around the header (first line)
 
-## Justification example
+## Justification
+
+There are three options for specifying justification. One can use `l` or `r` for justifying all cells to the left or right, respectively. One can also specify a distinct justification option for each column. Then the number of options will need to match the number of columns.
 
 ```
 » csvprint imdb.csv -j l r r
@@ -69,6 +58,8 @@ The Dark Knight                2008     $185 000 000
 ```
 
 ## Markdown example
+
+Note that this also supports left and right justification (not centered for now).
 
 ```
 » csvprint imdb.csv --markdown
@@ -121,5 +112,5 @@ optional arguments:
   -d DECORATOR, --decorator DECORATOR
                         which string/decorator to use in spacing
   --header              header decoration
-  --markdown            output valid markdown table
+  --markdown            output markdown table
 ```
