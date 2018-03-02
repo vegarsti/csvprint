@@ -13,12 +13,12 @@ def justification_translator(direction):
     else:
         raise ValueError
 
-def markdown_justification(direction, suffix=False):
+def markdown_justification(direction):
     if direction == 'right' or direction == 'r':
-        left, right = '-', ':'
+        right_character = ':'
     else:
-        left, right = '-', '-'
-    return left, right
+        right_character = '-'
+    return '-', right_character
 
 def print_message_and_exit(parser, message):
     script_name = 'csvprint'
@@ -84,6 +84,9 @@ def parse_cli_arguments(parser):
     args = vars(parser.parse_args())
     if args['markdown']:
         args['decorator'] = ' | '
+        args['md_prefix'], args['md_suffix'] = markdown_justification(
+            justification[i]
+        )
     if args['rows'] <= 0:
         print_message_and_exit(
             parser,
@@ -106,15 +109,15 @@ def parse_cli_arguments(parser):
             )
     return args
 
-def read_content(args):
+def store_content(args):
     csvfile = args['csvfile']
     max_rows = args['rows']
     separator = args['separator']
     csvreader = csv.reader(csvfile, delimiter=separator)
     header = next(csvreader)
-    lengths = [len(cell) for cell in list(header)]
-    number_of_columns = len(lengths)
-    content = [header]
+    widths = [len(cell) for cell in list(header)]
+    number_of_columns = len(widths)
+    args['content'] = [header]
     for row_number, row in enumerate(islice(csvreader, max_rows)):
         row_content = []
         number_of_cells = len(row)
@@ -125,15 +128,24 @@ def read_content(args):
                 +"'{separator}' is an incorrect separator character".format(separator=separator),
             )
         for i, cell in enumerate(row):
-            lengths[i] = max(len(cell), lengths[i])
+            widths[i] = max(len(cell), widths[i])
             row_content.append(cell)
-        content.append(row_content)
-    lengths = [l for l in lengths]
-    return content, lengths
+        args['content'].append(row_content)
+    if max_rows == sys.maxsize:
+        args['rows'] = row_number + 2
+    args['widths'] = [l for l in widths]
+    widths, decorator = args['widths'], args['decorator']
+    args['total_width'] = sum(widths) + (len(widths)-1)*len(decorator)
 
-def get_output(content, lengths, justification, decorator, header, markdown):
-    total_length = sum(lengths) + (len(lengths)-1)*len(decorator)
-    number_of_columns = len(lengths)
+def get_output(args):
+    content = args['content']
+    widths = args['widths']
+    justification = args['justify']
+    decorator = args['decorator']
+    header = args['header']
+    markdown = args['markdown']
+    total_width = args['total_width']
+    number_of_columns = len(widths)
     if len(justification) == 1:
         justification = [justification[0]]*number_of_columns
     elif len(justification) != number_of_columns:
@@ -149,27 +161,31 @@ def get_output(content, lengths, justification, decorator, header, markdown):
     for row_number, row in enumerate(content):
         output = ''
         if header and row_number == 0:
-            output += '-'*total_length + '\n'
+            output += '-'*total_width + '\n'
         number_of_cells = len(row)
         for i in range(number_of_columns):
             output += ('{:' + py_justification[i] + '{width}}').format(row[i],
-                width=lengths[i])
-            if i < len(lengths) - 1:
+                width=widths[i])
+            if i < len(widths) - 1:
                 output += decorator
         if header and row_number == 0:
-            output += '\n' + '-'*(total_length)
+            output += '\n' + '-'*(total_width)
         if markdown and row_number == 0:
             output += add_markdown_styling(
-                row_number, lengths, justification,
+                row_number, widths, justification,
                 number_of_columns, decorator
             )
-        total_output += output + '\n'
+        total_output += output
+        if row_number < args['rows'] - 1:
+            total_output += '\n'
+    if not args['csvfile'] == sys.stdin:
+        args['csvfile'].close()
     return total_output
 
-def add_markdown_styling(row_number, lengths, justification, number_of_columns, decorator):
+def add_markdown_styling(row_number, widths, justification, number_of_columns, decorator):
     output = '\n'
-    for i, l in enumerate(lengths):
-        md_prefix, md_suffix = markdown_justification(justification[i])
+    for i, l in enumerate(widths):
+        md_prefix, md_suffix = args['md_prefix'], args['md_suffix']
         offset = 3
         if i == 0 or i == number_of_columns - 1:
             offset = 4
@@ -182,13 +198,8 @@ def add_markdown_styling(row_number, lengths, justification, number_of_columns, 
 def main():
     parser = create_parser()
     args = parse_cli_arguments(parser)
-    content, lengths = read_content(args)
-    if not args['csvfile'] == sys.stdin:
-        args['csvfile'].close()
-    output = get_output(
-        content, lengths, args['justify'], args['decorator'],
-        header=args['header'], markdown=args['markdown']
-    )
+    store_content(args)
+    output = get_output(args)
     print(output)
 
 if __name__ == '__main__':
