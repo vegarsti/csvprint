@@ -101,15 +101,15 @@ def check_errors(parser, args):
                 parser,
                 f"no such file: {args['filename']}",
             )
+    return args
 
 def parse_cli_arguments(parser):
     args = vars(parser.parse_args())
+    args = check_errors(parser, args)
     if args['markdown']:
         args['decorator'] = ' | '
-        args['md_prefix'], args['md_suffix'] = markdown_justification(
-            justification[i]
-        )
-    check_errors(parser, args)
+        args['md_prefix'] = []
+        args['md_suffix'] = []
     return args
 
 def store_content(args):
@@ -139,6 +139,10 @@ def store_content(args):
     args['widths'] = [l for l in widths]
     widths, decorator = args['widths'], args['decorator']
     args['total_width'] = sum(widths) + (len(widths)-1)*len(decorator)
+    if len(args['justify']) == 1:
+        args['justify'] = [args['justify'][0]] * number_of_columns
+    elif len(args['justify']) != number_of_columns:
+        print_message_and_exit('number of justification arguments not equal number of columns')
 
 def get_output(args):
     content = args['content']
@@ -149,10 +153,6 @@ def get_output(args):
     markdown = args['markdown']
     total_width = args['total_width']
     number_of_columns = len(widths)
-    if len(justification) == 1:
-        justification = [justification[0]]*number_of_columns
-    elif len(justification) != number_of_columns:
-        print_message_and_exit('number of justification arguments not equal number of columns')
     try:
         py_justification = [justification_translator(j) for j in justification]
     except ValueError:
@@ -174,7 +174,7 @@ def get_output(args):
         if header and row_number == 0:
             output += '\n' + '-'*(total_width)
         if markdown and row_number == 0:
-            output += add_markdown_styling(args)
+            output += add_markdown_header(args)
         total_output += output
         if row_number < args['rows']:
             total_output += '\n'
@@ -182,13 +182,13 @@ def get_output(args):
         args['csvfile'].close()
     return total_output
 
-def add_markdown_styling(args):
+def add_markdown_header(args):
     justification = args['justify']
     number_of_columns = args['number_of_columns']
     decorator = args['decorator']
     output = '\n'
     for i, l in enumerate(args['widths']):
-        md_prefix, md_suffix = args['md_prefix'], args['md_suffix']
+        md_prefix, md_suffix = markdown_justification(args['justify'][i])
         offset = 3
         if i == 0 or i == number_of_columns - 1:
             offset = 4
