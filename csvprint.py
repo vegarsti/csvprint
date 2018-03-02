@@ -80,13 +80,7 @@ def create_parser():
     )
     return parser
 
-def parse_cli_arguments(parser):
-    args = vars(parser.parse_args())
-    if args['markdown']:
-        args['decorator'] = ' | '
-        args['md_prefix'], args['md_suffix'] = markdown_justification(
-            justification[i]
-        )
+def check_errors(parser, args):
     if args['rows'] <= 0:
         print_message_and_exit(
             parser,
@@ -107,6 +101,15 @@ def parse_cli_arguments(parser):
                 parser,
                 f"no such file: {args['filename']}",
             )
+
+def parse_cli_arguments(parser):
+    args = vars(parser.parse_args())
+    if args['markdown']:
+        args['decorator'] = ' | '
+        args['md_prefix'], args['md_suffix'] = markdown_justification(
+            justification[i]
+        )
+    check_errors(parser, args)
     return args
 
 def store_content(args):
