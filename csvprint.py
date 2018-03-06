@@ -14,11 +14,7 @@ def justification_translator(direction):
         raise ValueError
 
 def markdown_justification(direction):
-    if direction == 'r':
-        right_character = ':'
-    else:
-        right_character = '-'
-    return '-', right_character
+    return '-', {'>': ':', '<': '-'}[direction]
 
 def print_message_and_exit(parser, message):
     script_name = 'csvprint'
@@ -106,43 +102,46 @@ def check_errors(parser, args):
 def parse_cli_arguments(parser):
     args = vars(parser.parse_args())
     args = check_errors(parser, args)
-    if args['markdown']:
-        args['decorator'] = ' | '
-        args['md_prefix'] = []
-        args['md_suffix'] = []
     return args
 
-def store_content(args):
+def store_content(parser, args):
+    if args['markdown']:
+        args['decorator'] = ' | '
     csvfile = args['csvfile']
     max_rows = args['rows']
     separator = args['separator']
     csvreader = csv.reader(csvfile, delimiter=separator)
     header = next(csvreader)
-    widths = [len(cell) for cell in list(header)]
+    args['widths'] = widths = [len(cell) for cell in list(header)]
     args['number_of_columns'] = len(widths)
     number_of_columns = args['number_of_columns']
+    if len(args['justify']) == 1:
+        args['justify'] = [args['justify'][0]] * number_of_columns
+    elif len(args['justify']) != number_of_columns:
+        print_message_and_exit('number of justification arguments not equal number of columns')
+    try:
+        args['justify'] = [justification_translator(j) for j in args['justify']]
+    except ValueError:
+        print_message_and_exit(
+            f"incorrect justification option: {args['justify'][0]}\n" +
+            "options: l/left for left and r/right for right"
+        )
     args['content'] = [header]
     for row_number, row in enumerate(islice(csvreader, max_rows - 1)):
         row_content = []
         number_of_cells = len(row)
-        if number_of_cells != number_of_columns:
+        if number_of_cells != number_of_columns or number_of_cells == 1:
             print_message_and_exit(
                 parser,
-                "not a properly formatted csv file, or "
-                +"'{separator}' is an incorrect separator character".format(separator=separator),
+                f'not a properly formatted csv file, or {separator}\n' +
+                'is an incorrect separator character'
             )
         for i, cell in enumerate(row):
             widths[i] = max(len(cell), widths[i])
             row_content.append(cell)
         args['content'].append(row_content)
     args['rows'] = row_number + 1
-    args['widths'] = [l for l in widths]
-    widths, decorator = args['widths'], args['decorator']
-    args['total_width'] = sum(widths) + (len(widths)-1)*len(decorator)
-    if len(args['justify']) == 1:
-        args['justify'] = [args['justify'][0]] * number_of_columns
-    elif len(args['justify']) != number_of_columns:
-        print_message_and_exit('number of justification arguments not equal number of columns')
+    args['total_width'] = sum(widths) + (args['number_of_columns']-1)*len(args['decorator'])
 
 def get_output(args):
     content = args['content']
@@ -153,13 +152,6 @@ def get_output(args):
     markdown = args['markdown']
     total_width = args['total_width']
     number_of_columns = len(widths)
-    try:
-        py_justification = [justification_translator(j) for j in justification]
-    except ValueError:
-        print_message_and_exit(
-            f"incorrect justification option: {justification[0]}\n" +
-            "options: l/left for left and r/right for right"
-        )
     total_output = ''
     for row_number, row in enumerate(content):
         output = ''
@@ -167,7 +159,7 @@ def get_output(args):
             output += '-'*total_width + '\n'
         number_of_cells = len(row)
         for i in range(number_of_columns):
-            output += ('{:' + py_justification[i] + '{width}}').format(row[i],
+            output += ('{:' + justification[i] + '{width}}').format(row[i],
                 width=widths[i])
             if i < len(widths) - 1:
                 output += decorator
@@ -186,21 +178,23 @@ def add_markdown_header(args):
     justification = args['justify']
     number_of_columns = args['number_of_columns']
     decorator = args['decorator']
-    output = '\n'
+    header = '\n'
     for i, l in enumerate(args['widths']):
         md_prefix, md_suffix = markdown_justification(args['justify'][i])
         offset = 3
         if i == 0 or i == number_of_columns - 1:
-            offset = 4
-        output += md_prefix + '-'*(l+len(decorator)-offset) + md_suffix
+            offset += 1
+        column_length = l+len(decorator)-offset
+        border = '-'
+        header += f'{md_prefix}{border*column_length}{md_suffix}'
         if i < number_of_columns - 1:
-            output += '|'
-    return output
+            header += '|'
+    return header
 
 def main():
     parser = create_parser()
     args = parse_cli_arguments(parser)
-    store_content(args)
+    store_content(parser, args)
     output = get_output(args)
     print(output)
 
