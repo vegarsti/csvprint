@@ -112,3 +112,7 @@ optional arguments:
                         which string/decorator to use in spacing
   --header              header decoration
   --markdown            output valid markdown table
+
+## Testing
+
+Run `pytest`.
