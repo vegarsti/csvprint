@@ -125,6 +125,8 @@ def parse_cli_arguments(parser):
 def store_content(parser, args):
     if args['markdown']:
         args['decorator'] = ' | '
+    if args['separator'] == r'\t':
+        args['separator'] = '\t'
     csvreader = csv.reader(args['csvfile'], delimiter=args['separator'])
     header = next(csvreader)
     args['widths'] = [len(cell) for cell in list(header)]
@@ -140,18 +142,18 @@ def store_content(parser, args):
     args['content'] = [header]
     row_number = 0
     for row_number, row in enumerate(islice(csvreader, args['rows'] - 1)):
-        args['widths'], content = store_row(row_number, row, args)
+        args['widths'], content = store_row(row_number, row, args, parser)
         args['content'].append(content)
     args['rows'] = row_number + 1
     args['total_width'] = sum(args['widths']) + (args['number_of_columns']-1)*len(args['decorator'])
 
 
-def store_row(row_number, row, args):
+def store_row(row_number, row, args, parser):
     number_of_cells = len(row)
     if number_of_cells != args['number_of_columns'] or number_of_cells == 1:
         print_message_and_exit(
             parser,
-            f'not a properly formatted csv file, or {separator}\n' +
+            f"not a properly formatted csv file, or '{args['separator']}'\n" +
             'is an incorrect separator character'
         )
     row_content = []
@@ -162,7 +164,7 @@ def store_row(row_number, row, args):
     return widths, row_content
 
 
-def header_line(border, length):
+def header_line(length, border='-'):
     return f'{border*length}'
 
 def row_output(args, row, row_number):
@@ -181,10 +183,10 @@ def get_output(args):
     rows = []
     for row_number, row in enumerate(args['content']):
         if args['header'] and row_number == 0:
-            rows.append(header_line(border, args['total_width']))
+            rows.append(header_line(args['total_width']))
         rows.append(row_output(args, row, row_number))
         if args['header'] and row_number == 0:
-            rows.append(header_line(border, args['total_width']))
+            rows.append(header_line(args['total_width']))
         if args['markdown'] and row_number == 0:
             rows.append(add_markdown_header(args))
     return '\n'.join(rows)
@@ -199,7 +201,7 @@ def add_markdown_header(args):
             offset += 1
         column_length = l+len(args['decorator'])-offset
         border = '-'
-        cells.append(f'{md_prefix}{header_line(border, column_length)}{md_suffix}')
+        cells.append(f'{md_prefix}{header_line(column_length)}{md_suffix}')
     return '|'.join(cells)
 
 def main():
