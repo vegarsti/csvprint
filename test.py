@@ -2,6 +2,7 @@ from csvprint import *
 import sys
 from test_cases import *
 import pytest
+import parser
 
 @pytest.mark.parametrize("args, expected_output", [
     (['imdb.csv'], expected_normal_output),
@@ -13,9 +14,9 @@ import pytest
 ])
 def test_correct_features(args, expected_output):
     sys.argv = [sys.argv[0]]
-    parser = create_parser()
+    csvparser = parser.create()
     sys.argv += args
-    args = parse_cli_arguments(parser)
-    store_content(parser, args)
+    args = parser.parse_cli_arguments(csvparser)
+    parser.store_content(csvparser, args)
     output = get_output(args)
     assert output == expected_output
