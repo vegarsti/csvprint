@@ -5,24 +5,6 @@ import csv
 import sys
 from itertools import islice
 
-def justification_translator(direction):
-    if direction == 'l':
-        return '<'
-    elif direction == 'r':
-        return '>'
-    else:
-        raise ValueError
-
-def markdown_justification(direction):
-    return '-', {'>': ':', '<': '-'}[direction]
-
-def print_message_and_exit(parser, message):
-    script_name = 'csvprint'
-    parser.print_usage()
-    print(f"{script_name}: error:", end=' ')
-    print(message)
-    sys.exit()
-
 def create_parser():
     script_name = 'csvprint'
     parser = argparse.ArgumentParser(
@@ -77,6 +59,24 @@ def create_parser():
     )
     return parser
 
+def justification_translator(direction):
+    if direction == 'l':
+        return '<'
+    elif direction == 'r':
+        return '>'
+    else:
+        raise ValueError
+
+def markdown_justification(direction):
+    return '-', {'>': ':', '<': '-'}[direction]
+
+def print_message_and_exit(parser, message):
+    script_name = 'csvprint'
+    parser.print_usage()
+    print(f"{script_name}: error:", end=' ')
+    print(message)
+    sys.exit()
+
 def file_error_checking(parser, args):
     reading_from_pipe = not sys.stdin.isatty() and args['filename'] == None
     if reading_from_pipe:
@@ -98,7 +98,7 @@ def justification_error_checking(parser, args):
     except ValueError:
         print_message_and_exit(
             parser,
-            f"incorrect justification option: {args['justify'][0]}\n" +
+            f"argument -j/--justify: invalid justification option: '{args['justify'][0]}'\n" +
             "options: l/left for left and r/right for right"
         )
 
@@ -106,7 +106,7 @@ def number_of_rows_error_checking(parser, args):
     if args['rows'] <= 0:
             print_message_and_exit(
                 parser,
-                "argument -n/--rows must be a positive integer",
+                "argument -n/--rows: expected positive integer",
             )
 
 def check_errors(parser, args):
@@ -123,22 +123,22 @@ def parse_cli_arguments(parser):
 def store_content(parser, args):
     if args['markdown']:
         args['decorator'] = ' | '
-    use_tab_separator = args['separator'] == r'\t'
-    if use_tab_separator:
+    using_tab_separator = args['separator'] == r'\t'
+    if using_tab_separator:
         args['separator'] = '\t'
     csvreader = csv.reader(args['csvfile'], delimiter=args['separator'])
     header = next(csvreader)
     args['widths'] = [len(cell) for cell in list(header)]
-    args['number_of_columns'] = len(args['widths'])
-    number_of_columns = args['number_of_columns']
+    args['num_columns'] = len(args['widths'])
+    number_of_columns = args['num_columns']
     justify_all_columns_equally = len(args['justify']) == 1
-    number_of_columns_differ_from_justification = len(args['justify']) != number_of_columns
+    justification_and_columns_differ = len(args['justify']) != number_of_columns
     if justify_all_columns_equally:
         args['justify'] = [args['justify'][0]] * number_of_columns
-    elif number_of_columns_differ_from_justification:
+    elif justification_and_columns_differ:
         print_message_and_exit(
             parser,
-            'number of justification arguments not equal number of columns'
+            'argument -j/--justify: only one argument or one per column'
         )
     args['content'] = [header]
     row_number = 0
@@ -146,11 +146,11 @@ def store_content(parser, args):
         args['widths'], content = store_row(row_number, row, args, parser)
         args['content'].append(content)
     args['rows'] = row_number + 1
-    args['total_width'] = sum(args['widths']) + (args['number_of_columns']-1)*len(args['decorator'])
+    args['total_width'] = sum(args['widths']) + (args['num_columns']-1)*len(args['decorator'])
 
 def store_row(row_number, row, args, parser):
-    number_of_cells = len(row)
-    if number_of_cells != args['number_of_columns'] or number_of_cells == 1:
+    mismatching_row_length = len(row) != args['num_columns'] or len(row) == 1
+    if mismatching_row_length:
         print_message_and_exit(
             parser,
             f"not a properly formatted csv file, or '{args['separator']}'\n"
@@ -168,7 +168,7 @@ def header_line(length, border='-'):
 
 def row_output(args, row, row_number):
     cells = []
-    for i in range(args['number_of_columns']):
+    for i in range(args['num_columns']):
         cells.append('{:{align}{width}}'.format(
             row[i],
             align=args['justify'][i],
@@ -193,13 +193,12 @@ def get_output(args):
 def add_markdown_header(args):
     cells = []
     for i, l in enumerate(args['widths']):
-        prefix, suffix = markdown_justification(args['justify'][i])
-        first_or_last_column = i == 0 or i == args['number_of_columns'] - 1
+        first_or_last_column = i == 0 or i == args['num_columns'] - 1
         offset = 3
         if first_or_last_column:
             offset += 1
         column_length = l+len(args['decorator'])-offset
-        border = '-'
+        prefix, suffix = markdown_justification(args['justify'][i])
         cells.append(f'{prefix}{header_line(column_length)}{suffix}')
     return '|'.join(cells)
 
