@@ -104,10 +104,18 @@ def number_of_rows_error_checking(parser, args):
                 "argument -n/--rows: expected positive integer",
             )
 
+def only_markdown_or_header(parser, args):
+    if args['markdown'] and args['header']:
+        print_message_and_exit(
+            parser,
+            "cannot use --header with --markdown"
+        )
+
 def check_errors(parser, args):
     number_of_rows_error_checking(parser, args)
     file_error_checking(parser, args)
     justification_error_checking(parser, args)
+    only_markdown_or_header(parser, args)
     return args
 
 def parse_cli_arguments(parser):
@@ -152,7 +160,7 @@ def store_row(row_number, row, args, parser):
         )
     row_content = []
     widths = []
-    for i, cell in enumerate(row):
-        widths.append(max(len(cell), args['widths'][i]))
+    for cell_num, cell in enumerate(row):
+        widths.append(max(len(cell), args['widths'][cell_num]))
         row_content.append(cell)
     return widths, row_content
