@@ -9,15 +9,15 @@ def markdown_justification(direction):
 def header_line(length, border='-'):
     return f'{border*length}'
 
-def row_output(args, row, row_number):
+def row_output(justify, widths, decorator, row, row_number):
     cells = []
     for cell_num, cell in enumerate(row):
         cells.append('{:{align}{width}}'.format(
             cell,
-            align=args['justify'][cell_num],
-            width=args['widths'][cell_num],
+            align=justify[cell_num],
+            width=widths[cell_num],
         ))
-    return args['decorator'].join(cells)
+    return decorator.join(cells)
 
 def get_output(args):
     rows = []
@@ -26,22 +26,33 @@ def get_output(args):
         markdown = args['markdown'] and row_number == 0
         if header:
             rows.append(header_line(args['total_width']))
-        rows.append(row_output(args, row, row_number))
+        rows.append(row_output(
+            args['justify'],
+            args['widths'],
+            args['decorator'],
+            row,
+            row_number,
+        ))
         if header:
             rows.append(header_line(args['total_width']))
         if markdown:
-            rows.append(add_markdown_header(args))
+            rows.append(add_markdown_header(
+                args['widths'],
+                args['num_columns'],
+                args['decorator'],
+                args['justify'],
+            ))
     return '\n'.join(rows)
 
-def add_markdown_header(args):
+def add_markdown_header(widths, num_columns, decorator, justify):
     cells = []
-    for cell_num, width in enumerate(args['widths']):
-        first_or_last_column = cell_num == 0 or cell_num == args['num_columns'] - 1
+    for cell_num, width in enumerate(widths):
+        first_or_last_column = cell_num == 0 or cell_num == num_columns - 1
         offset = 3
         if first_or_last_column:
             offset += 1
-        column_length = width + len(args['decorator']) - offset
-        prefix, suffix = markdown_justification(args['justify'][cell_num])
+        column_length = width + len(decorator) - offset
+        prefix, suffix = markdown_justification(justify[cell_num])
         cells.append(f'{prefix}{header_line(column_length)}{suffix}')
     return '|'.join(cells)
 
