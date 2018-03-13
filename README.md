@@ -88,7 +88,7 @@ The Dark Knight        | 2008         | $185 000 000
 ```
 » csvprint -h
 usage: csvprint [-h] [-s SEPARATOR] [-n ROWS] [-j JUSTIFY [JUSTIFY ...]]
-                [-d DECORATOR] [--header] [--markdown]
+                [-d DECORATOR] [--header | --markdown]
                 [filename]
 
 Command line utility for pretty printing csv files.
@@ -101,17 +101,19 @@ optional arguments:
   -s SEPARATOR, --separator SEPARATOR
                         separator/delimiter used in csv file
                         default is comma
+                        use 'tab' for tab separated files
   -n ROWS, --rows ROWS  number of rows to show
   -j JUSTIFY [JUSTIFY ...], --justify JUSTIFY [JUSTIFY ...]
                         which justification to use
                         default is left
                         choices: {l, r}
-                        can provide a list, in which case one
-                        choice for each column
+                        can provide a list, in which case
+                        one choice for each column
   -d DECORATOR, --decorator DECORATOR
                         which string/decorator to use in spacing
   --header              header decoration
-  --markdown            output valid markdown table
+  --markdown            output markdown table
+```
 
 ## Testing
 
