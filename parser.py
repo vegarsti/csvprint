@@ -113,23 +113,22 @@ def check_errors(parser, args):
 def parse_cli_arguments(parser):
     args = vars(parser.parse_args())
     args = check_errors(parser, args)
-    return args
-
-def store_content(parser, args):
     if args['markdown']:
         args['decorator'] = ' | '
     using_tab_separator = args['separator'] == r'\t'
     if using_tab_separator:
         args['separator'] = '\t'
+    return args
+
+def store_content(parser, args):
     csvreader = csv.reader(args['csvfile'], delimiter=args['separator'])
     header = next(csvreader)
     args['widths'] = [len(cell) for cell in list(header)]
     args['num_columns'] = len(args['widths'])
-    number_of_columns = args['num_columns']
     justify_all_columns_equally = len(args['justify']) == 1
-    justification_and_columns_differ = len(args['justify']) != number_of_columns
+    justification_and_columns_differ = len(args['justify']) != args['num_columns']
     if justify_all_columns_equally:
-        args['justify'] = [args['justify'][0]] * number_of_columns
+        args['justify'] = [args['justify'][0]] * args['num_columns']
     elif justification_and_columns_differ:
         print_message_and_exit(
             parser,

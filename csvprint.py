@@ -11,11 +11,11 @@ def header_line(length, border='-'):
 
 def row_output(args, row, row_number):
     cells = []
-    for i in range(args['num_columns']):
+    for cell_num, cell in enumerate(row):
         cells.append('{:{align}{width}}'.format(
-            row[i],
-            align=args['justify'][i],
-            width=args['widths'][i],
+            cell,
+            align=args['justify'][cell_num],
+            width=args['widths'][cell_num],
         ))
     return args['decorator'].join(cells)
 
@@ -35,13 +35,13 @@ def get_output(args):
 
 def add_markdown_header(args):
     cells = []
-    for i, l in enumerate(args['widths']):
-        first_or_last_column = i == 0 or i == args['num_columns'] - 1
+    for cell_num, width in enumerate(args['widths']):
+        first_or_last_column = cell_num == 0 or cell_num == args['num_columns'] - 1
         offset = 3
         if first_or_last_column:
             offset += 1
-        column_length = l+len(args['decorator'])-offset
-        prefix, suffix = markdown_justification(args['justify'][i])
+        column_length = width + len(args['decorator']) - offset
+        prefix, suffix = markdown_justification(args['justify'][cell_num])
         cells.append(f'{prefix}{header_line(column_length)}{suffix}')
     return '|'.join(cells)
 
