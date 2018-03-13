@@ -10,7 +10,10 @@ import parser
     (['imdb.csv', '--j', 'l'], expected_normal_output),
     (['imdb.csv', '--j', 'r'], expected_right_justified_output),
     (['example.tsv', '-s', '\\t'], expected_tab_output),
-    (['imdb.csv', '--header'], expected_header_output)
+    (['imdb.csv', '--header'], expected_header_output),
+    (['imdb.csv', '-n', '3'], expected_short_output),
+    (['imdb.csv', '-n', '1'], expected_oneline_output),
+    (['imdb.csv', '--markdown', '-j', 'l', 'r', 'r'], expected_justified_markdown_output),
 ])
 def test_correct_features(args, expected_output):
     sys.argv = [sys.argv[0]]
@@ -19,4 +22,5 @@ def test_correct_features(args, expected_output):
     args = parser.parse_cli_arguments(csvparser)
     parser.store_content(csvparser, args)
     output = get_output(args)
+    print(expected_output)
     assert output == expected_output
