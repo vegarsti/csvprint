@@ -2,21 +2,14 @@ import argparse
 import sys
 import csv
 from itertools import islice
-
-def justification_translator(direction):
-    if direction == 'l':
-        return '<'
-    elif direction == 'r':
-        return '>'
-    else:
-        raise ValueError
+from parse_types import *
 
 def create():
     script_name = 'csvprint'
     parser = argparse.ArgumentParser(
         description='Command line utility for pretty printing csv files.',
         formatter_class=argparse.RawTextHelpFormatter,
-        prog=script_name
+        prog=script_name,
     )
     parser.add_argument(
         'filename',
@@ -27,14 +20,14 @@ def create():
     parser.add_argument(
         '-s',
         '--separator',
-        type=str,
         default=',',
-        help='separator/delimiter used in csv file\ndefault is comma\nuse \\t for tabs',
+        help="separator/delimiter used in csv file\ndefault is comma\nuse 'tab' for tab separated files\n",
+        type=separator,
     )
     parser.add_argument(
         '-n',
         '--rows',
-        type=int,
+        type=rows,
         default=sys.maxsize,
         help='number of rows to show',
     )
@@ -42,9 +35,10 @@ def create():
         '-j',
         '--justify',
         nargs='+',
-        default=['l'],
+        default=['<'],
         help='which justification to use\ndefault is left\nchoices: {l, r}\n'
             + 'can provide a list, in which case\none choice for each column',
+        type=justification,
     )
     parser.add_argument(
         '-d',
@@ -53,12 +47,13 @@ def create():
         default=' ',
         help='which string/decorator to use in spacing',
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         '--header',
         action='store_true',
-        help='header decoration'
+        help='header decoration',
     )
-    parser.add_argument(
+    group.add_argument(
         '--markdown',
         action='store_true',
         help='output markdown table',
@@ -79,7 +74,7 @@ def file_error_checking(parser, args):
     elif args['filename'] == None:
         print_message_and_exit(
             parser,
-            "the following arguments are required: filename",
+            "required: filename or pipe",
         )
     else:
         try:
@@ -87,35 +82,20 @@ def file_error_checking(parser, args):
         except FileNotFoundError:
             print_message_and_exit(parser, f"no such file: {args['filename']}")
 
-def justification_error_checking(parser, args):
-    try:
-        args['justify'] = [justification_translator(j) for j in args['justify']]
-    except ValueError:
-        print_message_and_exit(
-            parser,
-            f"argument -j/--justify: invalid justification option: '{args['justify'][0]}'\n" +
-            "options: l/left for left and r/right for right"
-        )
-
-def number_of_rows_error_checking(parser, args):
-    if args['rows'] <= 0:
-            print_message_and_exit(
-                parser,
-                "argument -n/--rows: expected positive integer",
-            )
-
-def only_markdown_or_header(parser, args):
-    if args['markdown'] and args['header']:
+def markdown_options(parser, markdown, header, decorator):
+    if markdown and header:
         print_message_and_exit(
             parser,
             "cannot use --header with --markdown"
         )
+    if markdown and decorator is not ' ':
+        print_message_and_exit(
+            parser,
+            "cannot use decorator with --markdown"
+        )
 
 def check_errors(parser, args):
-    number_of_rows_error_checking(parser, args)
     file_error_checking(parser, args)
-    justification_error_checking(parser, args)
-    only_markdown_or_header(parser, args)
     return args
 
 def parse_cli_arguments(parser):
@@ -123,9 +103,6 @@ def parse_cli_arguments(parser):
     args = check_errors(parser, args)
     if args['markdown']:
         args['decorator'] = ' | '
-    using_tab_separator = args['separator'] == r'\t'
-    if using_tab_separator:
-        args['separator'] = '\t'
     return args
 
 def store_content(parser, args):
