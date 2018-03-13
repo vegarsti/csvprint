@@ -1,18 +1,19 @@
-from csvprint import *
-from test_cases import *
+import sys
+import test_cases
 import pytest
 import parser
+import utils
 
 @pytest.mark.parametrize("args, expected_output", [
-    normal,
-    markdown,
-    left,
-    right,
-    tab,
-    header,
-    short,
-    oneline,
-    justified_markdown,
+    test_cases.normal,
+    test_cases.markdown,
+    test_cases.left,
+    test_cases.right,
+    test_cases.tab,
+    test_cases.header,
+    test_cases.short,
+    test_cases.oneline,
+    test_cases.justified_markdown,
 ])
 def test_correct_features(args, expected_output):
     sys.argv = [sys.argv[0]]
@@ -20,6 +21,5 @@ def test_correct_features(args, expected_output):
     sys.argv += args
     args = parser.parse_cli_arguments(csvparser)
     parser.store_content(csvparser, args)
-    output = get_output(args)
-    print(expected_output)
+    output = utils.get_output(args)
     assert output == expected_output
