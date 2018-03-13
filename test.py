@@ -1,5 +1,4 @@
 from csvprint import *
-import sys
 from test_cases import *
 import pytest
 import parser

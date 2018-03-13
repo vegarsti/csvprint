@@ -1,3 +1,4 @@
 __pycache__
-CsvObject.py
 .cache
+.DS_Store
+pypi
