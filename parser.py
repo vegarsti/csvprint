@@ -122,19 +122,12 @@ def store_content(parser, args):
     args['content'] = [header]
     row_number = 0
     for row_number, row in enumerate(islice(csvreader, args['rows'] - 1)):
-        args['widths'], content = store_row(row_number, row, args, parser)
+        args['widths'], content = store_row(row_number, row, args)
         args['content'].append(content)
     args['rows'] = row_number + 1
     args['total_width'] = sum(args['widths']) + (args['num_columns']-1)*len(args['decorator'])
 
-def store_row(row_number, row, args, parser):
-    mismatching_row_length = len(row) != args['num_columns'] or len(row) == 1
-    if mismatching_row_length:
-        print_message_and_exit(
-            parser,
-            f"not a properly formatted csv file, or '{args['separator']}'\n"
-                + 'is an incorrect separator character'
-        )
+def store_row(row_number, row, args):
     row_content = []
     widths = []
     for cell_num, cell in enumerate(row):
