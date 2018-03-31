@@ -27,7 +27,7 @@ def create():
     parser.add_argument(
         '-n',
         '--rows',
-        type=rows,
+        type=positive_integer,
         default=sys.maxsize,
         help='number of rows to show',
     )
@@ -44,8 +44,15 @@ def create():
         '-d',
         '--decorator',
         type=str,
-        default=' ',
+        default='',
         help='which string/decorator to use in spacing',
+    )
+    parser.add_argument(
+        '-p',
+        '--padding',
+        type=non_negative_integer,
+        default=1,
+        help='padding',
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -82,18 +89,6 @@ def file_error_checking(parser, args):
         except FileNotFoundError:
             print_message_and_exit(parser, f"no such file: {args['filename']}")
 
-def markdown_options(parser, markdown, header, decorator):
-    if markdown and header:
-        print_message_and_exit(
-            parser,
-            "cannot use --header with --markdown"
-        )
-    if markdown and decorator is not ' ':
-        print_message_and_exit(
-            parser,
-            "cannot use decorator with --markdown"
-        )
-
 def check_errors(parser, args):
     file_error_checking(parser, args)
     return args
@@ -102,14 +97,13 @@ def parse_cli_arguments(parser):
     args = vars(parser.parse_args())
     args = check_errors(parser, args)
     if args['markdown']:
-        args['decorator'] = ' | '
+        args['decorator'] = '|'
     return args
 
 def store_content(parser, args):
     csvreader = csv.reader(args['csvfile'], delimiter=args['separator'])
     header = next(csvreader)
-    args['widths'] = [len(cell) for cell in list(header)]
-    args['num_columns'] = len(args['widths'])
+    args['num_columns'] = len(header)
     justify_all_columns_equally = len(args['justify']) == 1
     justification_and_columns_differ = len(args['justify']) != args['num_columns']
     if justify_all_columns_equally:
@@ -122,15 +116,83 @@ def store_content(parser, args):
     args['content'] = [header]
     row_number = 0
     for row_number, row in enumerate(islice(csvreader, args['rows'] - 1)):
-        args['widths'], content = store_row(row_number, row, args)
-        args['content'].append(content)
+        args['content'].append(row)
     args['rows'] = row_number + 1
-    args['total_width'] = sum(args['widths']) + (args['num_columns']-1)*len(args['decorator'])
 
-def store_row(row_number, row, args):
-    row_content = []
-    widths = []
-    for cell_num, cell in enumerate(row):
-        widths.append(max(len(cell), args['widths'][cell_num]))
-        row_content.append(cell)
-    return widths, row_content
+def normalize_columns(args):
+    for row in args['content']:
+        while len(row) < args['num_columns']:
+            row.append('')
+
+def get_column_widths(args):
+    return [max(map(len, col)) for col in zip(*args['content'])]
+
+def pad_cells(args):
+    column_widths = get_column_widths(args)
+    for row in args['content']:
+        num_cells = len(row)
+        for cell_num, cell in enumerate(row):
+            row[cell_num] = '{:{align}{width}}'.format(
+                cell,
+                align=args['justify'][cell_num],
+                width=column_widths[cell_num],
+            )
+
+def header_line(length, border='-'):
+    return f'{border*length}'
+
+def md_justification(justification):
+    if justification == '<':
+        return ':', '-'
+    elif justification == '>':
+        return '-', ':'
+    else:
+        return '-', '-'
+
+def markdown_header(args):
+    widths = get_column_widths(args)
+    content = []
+    for i, w in enumerate(widths):
+        if w < 3:
+            raise ValueError
+        left, right = md_justification(args['justify'][i])
+        content.append(left + '-'*(w-2) + right)
+    return content
+
+def add_header(args):
+    widths = get_column_widths(args)
+    if args['markdown']:
+        args['content'].insert(
+            1,
+            markdown_header(args),
+        )
+    if args['header']:
+        for index in (0, 2):
+            args['content'].insert(
+                index,
+                '-'*sum(widths),
+            )
+
+def add_padding(args):
+    for i, row in enumerate(args['content']):
+        padding_string = ' '*args['padding']
+        for j, cell in enumerate(row):
+            left = padding_string
+            right = padding_string
+            if j == 0:
+                left = ''
+            elif j == len(row) - 1:
+                right = ''
+            args['content'][i][j] = left + args['content'][i][j] + right
+
+def add_divider(args):
+    for i, row in enumerate(args['content']):
+        args['content'][i] = args['decorator'].join(args['content'][i])
+
+def run_pipeline(args):
+    normalize_columns(args)
+    pad_cells(args)
+    add_padding(args)
+    add_header(args)
+    add_divider(args)
+    return '\n'.join(args['content'])

@@ -21,5 +21,5 @@ def test_correct_features(args, expected_output):
     sys.argv += args
     args = parser.parse_cli_arguments(csvparser)
     parser.store_content(csvparser, args)
-    output = utils.get_output(args)
+    output = parser.run_pipeline(args)
     assert output == expected_output
