@@ -2,6 +2,7 @@
 
 import sys
 import parser
+import printer
 
 def main():
     csvparser = parser.create()
@@ -10,8 +11,8 @@ def main():
     reading_from_csvfile = not args['csvfile'] == sys.stdin
     if reading_from_csvfile:
         args['csvfile'].close()
-    content = parser.run_pipeline(args)
-    print(content)
+    output = printer.run_pipeline(args)
+    print(output)
 
 if __name__ == '__main__':
     main()
