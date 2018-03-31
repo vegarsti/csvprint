@@ -2,7 +2,7 @@ import sys
 import test_cases
 import pytest
 import parser
-import utils
+import printer
 
 @pytest.mark.parametrize("args, expected_output", [
     test_cases.normal,
@@ -10,6 +10,7 @@ import utils
     test_cases.left,
     test_cases.right,
     test_cases.tab,
+    test_cases.comma,
     test_cases.header,
     test_cases.short,
     test_cases.oneline,
@@ -21,5 +22,5 @@ def test_correct_features(args, expected_output):
     sys.argv += args
     args = parser.parse_cli_arguments(csvparser)
     parser.store_content(csvparser, args)
-    output = parser.run_pipeline(args)
+    output = printer.run_pipeline(args)
     assert output == expected_output

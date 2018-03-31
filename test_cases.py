@@ -52,6 +52,7 @@ markdown = ['imdb.csv', '--markdown'], expected_markdown_output
 left = ['imdb.csv', '--j', 'l'], expected_normal_output
 right = ['imdb.csv', '--j', 'r'], expected_right_justified_output
 tab = ['example.tsv', '-s', 'tab'], expected_tab_output
+comma = ['imdb.csv', '-s', 'comma'], expected_normal_output
 header =['imdb.csv', '--header'], expected_header_output
 short = ['imdb.csv', '-n', '3'], expected_short_output
 oneline = ['imdb.csv', '-n', '1'], expected_oneline_output
