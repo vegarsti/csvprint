@@ -1,21 +1,28 @@
-def normalize_columns(args):
-    for row in args['content']:
-        while len(row) < args['num_columns']:
+def copy_nested_list(l):
+    return [list(i) for i in l]
+
+def normalize_columns(content, num_columns):
+    new_content = copy_nested_list(content)
+    for row in new_content:
+        while len(row) < num_columns:
             row.append('')
+    return new_content
 
-def get_column_widths(args):
-    return [max(map(len, col)) for col in zip(*args['content'])]
+def get_column_widths(content):
+    return [max(map(len, col)) for col in zip(*content)]
 
-def pad_cells(args):
-    column_widths = get_column_widths(args)
-    for row in args['content']:
+def pad_cells(content, justify):
+    column_widths = get_column_widths(content)
+    new_content = copy_nested_list(content)
+    for row in new_content:
         num_cells = len(row)
         for cell_num, cell in enumerate(row):
             row[cell_num] = '{:{align}{width}}'.format(
                 cell,
-                align=args['justify'][cell_num],
+                align=justify[cell_num],
                 width=column_widths[cell_num],
             )
+    return new_content
 
 def header_line(length, border='-'):
     return f'{border*length}'
@@ -28,33 +35,36 @@ def md_justification(justification):
     else:
         return '-', '-'
 
-def markdown_header(args):
-    widths = get_column_widths(args)
+def markdown_header(content, justify):
+    widths = get_column_widths(content)
     content = []
     for i, w in enumerate(widths):
         if w < 3:
             raise ValueError
-        left, right = md_justification(args['justify'][i])
+        left, right = md_justification(justify[i])
         content.append(left + '-'*(w-2) + right)
     return content
 
-def add_header(args):
-    widths = get_column_widths(args)
-    if args['markdown']:
-        args['content'].insert(
+def add_header(content, markdown, header, justify):
+    widths = get_column_widths(content)
+    new_content = copy_nested_list(content)
+    if markdown:
+        new_content.insert(
             1,
-            markdown_header(args),
+            markdown_header(content, justify),
         )
-    if args['header']:
+    if header:
         for index in (0, 2):
-            args['content'].insert(
+            new_content.insert(
                 index,
                 '-'*sum(widths),
             )
+    return new_content
 
-def add_padding(args):
-    for i, row in enumerate(args['content']):
-        padding_string = ' '*args['padding']
+def add_padding(content, padding):
+    new_content = copy_nested_list(content)
+    for i, row in enumerate(new_content):
+        padding_string = ' '*padding
         for j, cell in enumerate(row):
             left = padding_string
             right = padding_string
@@ -62,16 +72,25 @@ def add_padding(args):
                 left = ''
             elif j == len(row) - 1:
                 right = ''
-            args['content'][i][j] = left + args['content'][i][j] + right
+            new_content[i][j] = left + new_content[i][j] + right
+    return new_content
 
-def add_divider(args):
-    for i, row in enumerate(args['content']):
-        args['content'][i] = args['decorator'].join(args['content'][i])
+def add_divider(content, decorator):
+    return [decorator.join(row) for row in content]
+
+def join_lines(content):
+    return '\n'.join(content)
 
 def run_pipeline(args):
-    normalize_columns(args)
-    pad_cells(args)
-    add_padding(args)
-    add_header(args)
-    add_divider(args)
-    return '\n'.join(args['content'])
+    content = normalize_columns(args['content'], args['num_columns'])
+    content = pad_cells(content, args['justify'])
+    content = add_padding(content, args['padding'])
+    content = add_header(
+        content,
+        args['markdown'],
+        args['header'],
+        args['justify']
+    )
+    content = add_divider(content, args['decorator'])
+    output = join_lines(content)
+    return output
