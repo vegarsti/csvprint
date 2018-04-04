@@ -76,7 +76,7 @@ def add_padding(content, padding):
     return new_content
 
 def add_divider(content, decorator):
-    return [decorator.join(row) for row in content]
+    return [decorator.join(row).rstrip() for row in content]
 
 def join_lines(content):
     return '\n'.join(content)
