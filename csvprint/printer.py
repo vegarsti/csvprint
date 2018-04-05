@@ -57,7 +57,7 @@ def add_header(content, markdown, header, justify):
         for index in (0, 2):
             new_content.insert(
                 index,
-                '-'*sum(widths),
+                ['-'*w for w in widths],
             )
     return new_content
 

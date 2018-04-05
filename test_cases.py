@@ -36,7 +36,7 @@ expected_short_output = """Title                 Release Year  Estimated Budget
 Shawshank Redemption  1994          $25 000 000
 The Godfather         1972          $6 000 000"""
 
-expected_oneline_output ="""Title  Release Year  Estimated Budget"""
+expected_oneline_output = """Title  Release Year  Estimated Budget"""
 
 expected_justified_markdown_output = """Title                  | Release Year | Estimated Budget
 :----------------------|-------------:|----------------:
@@ -45,6 +45,15 @@ The Godfather          |         1972 |       $6 000 000
 The Godfather: Part II |         1974 |      $13 000 000
 The Dark Knight        |         2008 |     $185 000 000
 12 Angry Men           |         1957 |         $350 000"""
+
+expected_header_with_decorator_output = """----------------------- o -------------- o -----------------
+Title                   o  Release Year  o  Estimated Budget
+----------------------- o -------------- o -----------------
+Shawshank Redemption    o  1994          o  $25 000 000
+The Godfather           o  1972          o  $6 000 000
+The Godfather: Part II  o  1974          o  $13 000 000
+The Dark Knight         o  2008          o  $185 000 000
+12 Angry Men            o  1957          o  $350 000"""
 
 
 normal = ['imdb.csv'], expected_normal_output
@@ -56,4 +65,5 @@ comma = ['imdb.csv', '-s', 'comma'], expected_normal_output
 header =['imdb.csv', '--header'], expected_header_output
 short = ['imdb.csv', '-n', '3'], expected_short_output
 oneline = ['imdb.csv', '-n', '1'], expected_oneline_output
-justified_markdown = ['imdb.csv', '--markdown', '-j', 'l', 'r', 'r'],expected_justified_markdown_output
+justified_markdown = ['imdb.csv', '--markdown', '-j', 'l', 'r', 'r'], expected_justified_markdown_output
+header_with_decorator = ['imdb.csv', '--header', '-d', ' o '], expected_header_with_decorator_output

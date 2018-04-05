@@ -15,6 +15,7 @@ from csvprint import printer
     test_cases.short,
     test_cases.oneline,
     test_cases.justified_markdown,
+    test_cases.header_with_decorator,
 ])
 def test_correct_features(args, expected_output):
     sys.argv = [sys.argv[0]]
