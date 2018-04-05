@@ -25,7 +25,7 @@ def pad_cells(content, justify):
     return new_content
 
 def header_line(length, border='-'):
-    return f'{border*length}'
+    return border*length
 
 def md_justification(justification):
     if justification == '<':

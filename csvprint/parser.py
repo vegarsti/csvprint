@@ -70,7 +70,7 @@ def create():
 def print_message_and_exit(parser, message):
     script_name = 'csvprint'
     parser.print_usage()
-    print(f"{script_name}: error:", end=' ')
+    print("{}: error:".format(script_name), end=' ')
     print(message)
     sys.exit()
 
@@ -87,7 +87,7 @@ def file_error_checking(parser, args):
         try:
             args['csvfile'] = open(args['filename'])
         except FileNotFoundError:
-            print_message_and_exit(parser, f"no such file: {args['filename']}")
+            print_message_and_exit(parser, "no such file: {}".format(args['filename']))
 
 def check_errors(parser, args):
     file_error_checking(parser, args)
