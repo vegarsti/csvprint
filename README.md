@@ -27,12 +27,7 @@ The Dark Knight        2008         $185 000 000
 
 ## Installation
 
-Clone the repo and add an alias for `python /path/to/csvprint/csvprint.py` to your shell config, e.g.
-
-```
-git clone https://github.com/vegarsti/csvprint.git ~/path/to/csvprint
-echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
-```
+Clone the repo and do `pip install .`, and you should be good to go.
 
 ## Flags
 
@@ -42,6 +37,7 @@ echo "alias csvprint='python3 /path/to/csvprint/csvprint.py'" >> ~/.bash_profile
 * `j` or `--justify` to specify justification (left or right). See examples below
 * `-d` decorator to separate fields by (e.g. `' '`, which is default)
 * `--header` add border around the header (first line)
+* `--padding` add padding to each side of columns (default is 1)
 
 ## Justification
 
@@ -64,7 +60,7 @@ Note that this also supports left and right justification (not centered for now)
 ```
 » csvprint imdb.csv --markdown
 Title                  | Release Year | Estimated Budget
------------------------|--------------|-----------------
+:----------------------|:-------------|:----------------
 Shawshank Redemption   | 1994         | $25 000 000
 The Godfather          | 1972         | $6 000 000
 The Godfather: Part II | 1974         | $13 000 000
@@ -75,7 +71,7 @@ The Dark Knight        | 2008         | $185 000 000
 When rendered as markdown, this looks like
 
 Title                  | Release Year | Estimated Budget
------------------------|--------------|-----------------
+:----------------------|:-------------|:----------------
 Shawshank Redemption   | 1994         | $25 000 000
 The Godfather          | 1972         | $6 000 000
 The Godfather: Part II | 1974         | $13 000 000
@@ -88,7 +84,7 @@ The Dark Knight        | 2008         | $185 000 000
 ```
 » csvprint -h
 usage: csvprint [-h] [-s SEPARATOR] [-n ROWS] [-j JUSTIFY [JUSTIFY ...]]
-                [-d DECORATOR] [--header | --markdown]
+                [-d DECORATOR] [-p PADDING] [--header | --markdown]
                 [filename]
 
 Command line utility for pretty printing csv files.
@@ -111,10 +107,12 @@ optional arguments:
                         one choice for each column
   -d DECORATOR, --decorator DECORATOR
                         which string/decorator to use in spacing
+  -p PADDING, --padding PADDING
+                        padding
   --header              header decoration
   --markdown            output markdown table
 ```
 
 ## Testing
 
-Run `pytest`.
+Run `pytest` while in the root directory of this repository.

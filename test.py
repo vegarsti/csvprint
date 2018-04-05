@@ -1,8 +1,8 @@
 import sys
 import test_cases
 import pytest
-import parser
-import printer
+from csvprint import parser
+from csvprint import printer
 
 @pytest.mark.parametrize("args, expected_output", [
     test_cases.normal,

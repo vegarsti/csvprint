@@ -2,7 +2,7 @@ import argparse
 import sys
 import csv
 from itertools import islice
-from parse_types import *
+from .parse_types import *
 
 def create():
     script_name = 'csvprint'
