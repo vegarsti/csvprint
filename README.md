@@ -1,5 +1,7 @@
 # `csvprint`
 
+[![Build Status](https://travis-ci.org/vegarsti/csvprint.svg?branch=master)](https://travis-ci.org/travis-ci/travis-web)
+
 Command-line utility for pretty printing csv files.
 
 ## Example
