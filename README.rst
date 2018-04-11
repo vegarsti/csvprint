@@ -10,7 +10,7 @@ Example
 
 ::
 
-    » csvprint imdb.csv
+    » csvprint examples/imdb.csv
     Title                  Release Year Estimated Budget
     Shawshank Redemption   1994         $25 000 000
     The Godfather          1972         $6 000 000
@@ -23,7 +23,7 @@ output:
 
 ::
 
-    » cat imdb.csv | csvprint
+    » cat examples/imdb.csv | csvprint
     Title                  Release Year Estimated Budget
     Shawshank Redemption   1994         $25 000 000
     The Godfather          1972         $6 000 000
