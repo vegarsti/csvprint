@@ -56,14 +56,16 @@ The Dark Knight         o  2008          o  $185 000 000
 12 Angry Men            o  1957          o  $350 000"""
 
 
-normal = ['imdb.csv'], expected_normal_output
-markdown = ['imdb.csv', '--markdown'], expected_markdown_output
-left = ['imdb.csv', '--j', 'l'], expected_normal_output
-right = ['imdb.csv', '--j', 'r'], expected_right_justified_output
-tab = ['example.tsv', '-s', 'tab'], expected_tab_output
-comma = ['imdb.csv', '-s', 'comma'], expected_normal_output
-header =['imdb.csv', '--header'], expected_header_output
-short = ['imdb.csv', '-n', '3'], expected_short_output
-oneline = ['imdb.csv', '-n', '1'], expected_oneline_output
-justified_markdown = ['imdb.csv', '--markdown', '-j', 'l', 'r', 'r'], expected_justified_markdown_output
-header_with_decorator = ['imdb.csv', '--header', '-d', ' o '], expected_header_with_decorator_output
+NORMAL_FILENAME = 'examples/imdb.csv'
+
+normal = [NORMAL_FILENAME], expected_normal_output
+markdown = [NORMAL_FILENAME, '--markdown'], expected_markdown_output
+left = [NORMAL_FILENAME, '--j', 'l'], expected_normal_output
+right = [NORMAL_FILENAME, '--j', 'r'], expected_right_justified_output
+tab = ['examples/small.tsv', '-s', 'tab'], expected_tab_output
+comma = [NORMAL_FILENAME, '-s', 'comma'], expected_normal_output
+header =[NORMAL_FILENAME, '--header'], expected_header_output
+short = [NORMAL_FILENAME, '-n', '3'], expected_short_output
+oneline = [NORMAL_FILENAME, '-n', '1'], expected_oneline_output
+justified_markdown = [NORMAL_FILENAME, '--markdown', '-j', 'l', 'r', 'r'], expected_justified_markdown_output
+header_with_decorator = [NORMAL_FILENAME, '--header', '-d', ' o '], expected_header_with_decorator_output
