@@ -73,7 +73,7 @@ Then the number of options will need to match the number of columns.
 
 ::
 
-    » csvprint imdb.csv -j l r r
+    » csvprint examples/imdb.csv -j l r r
     Title                  Release Year Estimated Budget
     Shawshank Redemption           1994      $25 000 000
     The Godfather                  1972       $6 000 000
@@ -89,7 +89,7 @@ for now).
 
 ::
 
-    » csvprint imdb.csv --markdown
+    » csvprint examples/imdb.csv --markdown
     Title                  | Release Year | Estimated Budget
     :----------------------|:-------------|:----------------
     Shawshank Redemption   | 1994         | $25 000 000
