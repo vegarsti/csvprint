@@ -18,7 +18,7 @@ Example
     The Dark Knight        2008         $185 000 000
     12 Angry Men           1957         $350 000
 
-You can also pipe output from other programs to csvprint to format the
+You can also pipe output from other programs to ``csvprint`` to format the
 output:
 
 ::
@@ -34,23 +34,34 @@ output:
 Installation
 ------------
 
-Clone the repo and do ``pip install .``, and you should be good to go.
+If Python 3 with `pip
+<http://google.com>`_ is installed, you can do ``pip install csvprint`` in your terminal.
 
-Flags
+Usage
 -----
 
--  ``--markdown`` produces a markdown table. If you just want this,
-   though, you should probably use
-   ```csvtomd`` <https://github.com/mplewis/csvtomd>`__.
--  ``-s`` to specify delimiter (default is comma), in case of e.g. a
-   tab-separated file
--  ``-n`` to specify number of rows to show
--  ``j`` or ``--justify`` to specify justification (left or right). See
-   examples below
--  ``-d`` decorator to separate fields by (e.g. ``' '``, which is
-   default)
--  ``--header`` add border around the header (first line)
--  ``--padding`` add padding to each side of columns (default is 1)
+``csvprint [filename]`` prints a formatted table if ``filename`` is a comma separated file.
+
+Options
+-------
+
++--------------------+-----------------------------------------------------------------+
+| Command            | Result                                                          |
++====================+=================================================================+
+| ``--markdown``     | print as markdown table                                         |
++--------------------+-----------------------------------------------------------------+
+| ``--header``       | add header decoration around the first line                     |
++--------------------+-----------------------------------------------------------------+
+| ``-p [n]``         | add a padding of ``n`` spaces for each column, on both sides    |
++--------------------+-----------------------------------------------------------------+
+| ``-s 'char'``      | file is delimited by `char` (instead of comma), ``tab`` for tab |
++--------------------+-----------------------------------------------------------------+
+| ``-d [string]``    | specify the string to separate columns                          |
++--------------------+-----------------------------------------------------------------+
+| ``-j``             | specify justification (left or right) - see examples below      |
++--------------------+-----------------------------------------------------------------+
+| ``-h``             | print help message                                              |
++--------------------+-----------------------------------------------------------------+
 
 Justification
 -------------
@@ -73,7 +84,7 @@ Then the number of options will need to match the number of columns.
 Markdown example
 ----------------
 
-Note that this also supports left and right justification (not centered
+Markdown output also supports left and right justification (not centered
 for now).
 
 ::
@@ -102,43 +113,6 @@ When rendered as markdown, this looks like
 +--------------------------+----------------+--------------------+
 | 12 Angry Men             | 1957           | $350 000           |
 +--------------------------+----------------+--------------------+
-
-Help message
-------------
-
-``csvprint -h`` or ``csvprint --help`` prints a help message:
-
-::
-
-    » csvprint -h
-    usage: csvprint [-h] [-s SEPARATOR] [-n ROWS] [-j JUSTIFY [JUSTIFY ...]]
-                    [-d DECORATOR] [-p PADDING] [--header | --markdown]
-                    [filename]
-
-    Command line utility for pretty printing csv files.
-
-    positional arguments:
-      filename              file to pretty print
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      -s SEPARATOR, --separator SEPARATOR
-                            separator/delimiter used in csv file
-                            default is comma
-                            use 'tab' for tab separated files
-      -n ROWS, --rows ROWS  number of rows to show
-      -j JUSTIFY [JUSTIFY ...], --justify JUSTIFY [JUSTIFY ...]
-                            which justification to use
-                            default is left
-                            choices: {l, r}
-                            can provide a list, in which case
-                            one choice for each column
-      -d DECORATOR, --decorator DECORATOR
-                            which string/decorator to use in spacing
-      -p PADDING, --padding PADDING
-                            padding
-      --header              header decoration
-      --markdown            output markdown table
 
 Testing
 -------
