@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='csvprint',
-    version='0.1.0',
+    version='0.1.1',
     description='Pretty-printer for csv files, including in Markdown format',
     packages=['csvprint'],
     license='MIT',

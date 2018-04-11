@@ -3,13 +3,19 @@ clean:
 	pip uninstall csvprint
 
 wheel:
+	make clean
 	python setup.py sdist bdist_wheel
 
 pypi-test:
-	twine upload -r test --sign dist/csvprint*
+	make wheel
+	twine upload -r test dist/csvprint*
+	pip install -i https://testpypi.python.org/pypi csvprint
+	pytest
+	pip uninstall csvprint
 
 pypi:
-	twine upload -r pypi --sign dist/attrs-15.1.0
-
-uninstall:
+	make wheel
+	twine upload -r pypi dist/csvprint*
+	pip install csvprint
+	pytest
 	pip uninstall csvprint

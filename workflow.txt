@@ -1,0 +1,4 @@
+* Bump version number
+* Upload to github, ensure continuous integration tests pass
+* `make pypi-test` to upload to PyPI test and ensure tests pass
+* `make pypi` to upload to PyPI and test
