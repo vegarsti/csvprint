@@ -4,3 +4,7 @@ __pycache__
 pypi
 .pyc
 .pytest_cache
+build
+27-sdist
+csvprint.egg-info/
+dist

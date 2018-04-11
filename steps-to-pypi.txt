@@ -1,0 +1,16 @@
+# Remove directories
+rm -rf build dist
+
+# Build wheel
+python setup.py sdist bdist_wheel
+
+# Upload to PyPI test server
+twine upload -r test --sign dist/csvprint*
+
+# Install from test server
+pip install -i https://testpypi.python.org/pypi csvprint
+
+# Upload to production PyPI server
+twine upload -r pypi --sign dist/attrs-15.1.0
+
+# Now `pip install` should work!
