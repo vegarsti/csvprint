@@ -60,7 +60,7 @@ Options
 +--------------------+-----------------------------------------------------------------+
 
 Justification example
---------------------
+---------------------
 
 There are three options for specifying justification. One can use ``l``
 or ``r`` for justifying all cells to the left or right, respectively.
