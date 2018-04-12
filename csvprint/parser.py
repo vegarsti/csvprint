@@ -104,6 +104,12 @@ def store_content(parser, args):
     csvreader = csv.reader(args['csvfile'], delimiter=args['separator'])
     header = next(csvreader)
     args['num_columns'] = len(header)
+    args['content'] = [header]
+    row_number = 0
+    for row_number, row in enumerate(islice(csvreader, args['rows'] - 1)):
+        args['num_columns'] = max(len(row), args['num_columns'])
+        args['content'].append(row)
+    args['rows'] = row_number + 1
     justify_all_columns_equally = len(args['justify']) == 1
     justification_and_columns_differ = len(args['justify']) != args['num_columns']
     if justify_all_columns_equally:
@@ -113,8 +119,3 @@ def store_content(parser, args):
             parser,
             'argument -j/--justify: only one argument or one per column'
         )
-    args['content'] = [header]
-    row_number = 0
-    for row_number, row in enumerate(islice(csvreader, args['rows'] - 1)):
-        args['content'].append(row)
-    args['rows'] = row_number + 1
