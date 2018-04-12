@@ -5,8 +5,15 @@
 
 Command-line utility for pretty printing csv files.
 
-Example
+Installation
+------------
+
+If Python 3 with the package manager pip is installed, doing ``pip3 install csvprint`` in your terminal should do the trick.
+
+Usage
 -------
+
+``csvprint [filename]`` prints a formatted table if ``filename`` is a comma separated file.
 
 ::
 
@@ -31,17 +38,6 @@ output:
     The Dark Knight        2008         $185 000 000
     12 Angry Men           1957         $350 000
 
-Installation
-------------
-
-If Python 3 with `pip
-<http://google.com>`_ is installed, you can do ``pip install csvprint`` in your terminal.
-
-Usage
------
-
-``csvprint [filename]`` prints a formatted table if ``filename`` is a comma separated file.
-
 Options
 -------
 
@@ -63,8 +59,8 @@ Options
 | ``-h``             | print help message                                              |
 +--------------------+-----------------------------------------------------------------+
 
-Justification
--------------
+Justification example
+--------------------
 
 There are three options for specifying justification. One can use ``l``
 or ``r`` for justifying all cells to the left or right, respectively.
