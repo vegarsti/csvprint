@@ -4,19 +4,7 @@ import pytest
 from csvprint import parser
 from csvprint import printer
 
-@pytest.mark.parametrize("args, expected_output", [
-    test_cases.normal,
-    test_cases.markdown,
-    test_cases.left,
-    test_cases.right,
-    test_cases.tab,
-    test_cases.comma,
-    test_cases.header,
-    test_cases.short,
-    test_cases.oneline,
-    test_cases.justified_markdown,
-    test_cases.header_with_decorator,
-])
+@pytest.mark.parametrize("args, expected_output", test_cases.test_cases)
 def test_correct_features(args, expected_output):
     sys.argv = [sys.argv[0]]
     csvparser = parser.create()
