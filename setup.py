@@ -1,13 +1,13 @@
 from setuptools import setup
 
 with open('README.rst', 'r') as readme:
-    long_description = readme.read()
+    LONG_DESCRIPTION = readme.read()
 
 setup(
     name='csvprint',
-    version='0.1.3',
+    version='0.2.0',
     description='Pretty-printer for csv files, including in Markdown format',
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     packages=['csvprint'],
     license='MIT',
     scripts=['bin/csvprint'],
