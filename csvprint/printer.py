@@ -41,6 +41,13 @@ def md_justification(justification):
     else:
         return '-', '-'
 
+def latex_justification(justification):
+    """Given justification option, return corresponding latex"""
+    if justification == '<':
+        return 'l'
+    elif justification == '>':
+        return 'r'
+
 def markdown_header(table, justify):
     """Get markdown header for table according to given justification options"""
     widths = column_widths(table)
@@ -90,18 +97,37 @@ def add_padding(table, padding):
 
 def join_columns_with_divider(table, decorator):
     """Join each line in table with the decorator string between each cell"""
-    return [decorator.join(row).rstrip() for row in table]
+    return [decorator.join(row) for row in table]
 
 def join_formatted_lines(lines):
     """Return the finished output"""
     return '\n'.join(lines)
 
+def add_latex_line_endings(lines):
+    """Add latex newline character to each line"""
+    return [line + r' \\' for line in lines]
+
+def add_latex_table_environment(lines, number_of_columns, justification):
+    """Add latex environment specification"""
+    lines = list(lines)
+    latex_justifications = [latex_justification(j) for j in justification]
+    justification_line = '{{{}}}'.format(''.join(latex_justifications))
+    lines.insert(0, r'\begin{tabular}' + justification_line)
+    lines.append('\end{tabular}')
+    return lines
+
+def right_strip_lines(lines):
+    """Remove trailing spaces on each line"""
+    return [line.rstrip() for line in lines]
+
 def run_pipeline(args):
+    """Run the printing pipeline according to arguments given"""
     raw_table = args['content']
     number_of_columns = args['num_columns']
     justification = args['justify']
     padding = args['padding']
     output_as_markdown = args['markdown']
+    output_as_latex = args['latex']
     output_as_header = args['header']
     decorator = args['decorator']
     normalized_table = normalize_table(raw_table, number_of_columns)
@@ -112,5 +138,10 @@ def run_pipeline(args):
     if output_as_header:
         padded_table = add_header(padded_table, justification)
     lines = join_columns_with_divider(padded_table, decorator)
+    if output_as_latex:
+        lines = add_latex_line_endings(lines)
+        lines = add_latex_table_environment(lines, number_of_columns, justification)
+    else:
+        lines = right_strip_lines(lines)
     finished_output = join_formatted_lines(lines)
     return finished_output

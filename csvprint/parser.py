@@ -65,6 +65,11 @@ def create():
         action='store_true',
         help='output markdown table',
     )
+    group.add_argument(
+        '--latex',
+        action='store_true',
+        help='output markdown table',
+    )
     return parser
 
 def print_message_and_exit(parser, message):
@@ -98,6 +103,8 @@ def parse_cli_arguments(parser):
     args = check_errors(parser, args)
     if args['markdown']:
         args['decorator'] = '|'
+    if args['latex']:
+        args['decorator'] = '&'
     return args
 
 def store_content(parser, args):
