@@ -1,6 +1,7 @@
 import argparse
 
 def justification(direction):
+    """Parse the direction, possibly raising error"""
     if direction == 'l':
         return '<'
     elif direction == 'r':
@@ -9,6 +10,7 @@ def justification(direction):
         raise argparse.ArgumentTypeError('must be l for left or r for right')
 
 def separator(string):
+    """Parse the separator, possibly raising error"""
     options = {
         'tab': '\t',
         'comma': ','
@@ -22,6 +24,7 @@ def separator(string):
         )
 
 def positive_integer(n):
+    """Parse positive integer, possibly raising error"""
     message = 'must be a positive integer'
     try:
         n = int(n)
@@ -33,6 +36,7 @@ def positive_integer(n):
         raise argparse.ArgumentTypeError(message)
 
 def non_negative_integer(n):
+    """Parse non-negative integer, possibly raising error"""
     message = 'must be a non-negative integer'
     try:
         n = int(n)

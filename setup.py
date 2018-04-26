@@ -5,8 +5,8 @@ with open('README.rst', 'r') as readme:
 
 setup(
     name='csvprint',
-    version='0.2.0',
-    description='Pretty-printer for csv files, including in Markdown format',
+    version='0.3.1',
+    description='Print csv files in columnated format, can also output in Markdown and LaTeX format',
     long_description=LONG_DESCRIPTION,
     packages=['csvprint'],
     license='MIT',
