@@ -96,7 +96,7 @@ for now).
     The Dark Knight        | 2008         | $185 000 000
     12 Angry Men           | 1957         | $350 000
 
-When rendered as markdown, this looks like
+When rendered as HTML, this looks like
 
 +--------------------------+----------------+--------------------+
 | Title                    | Release Year   | Estimated Budget   |
