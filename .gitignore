@@ -2,7 +2,7 @@ __pycache__
 .cache
 .DS_Store
 pypi
-.pyc
+*.pyc
 .pytest_cache
 build
 27-sdist
