@@ -113,7 +113,7 @@ def add_latex_table_environment(lines, number_of_columns, justification):
     latex_justifications = [latex_justification(j) for j in justification]
     justification_line = '{{{}}}'.format(''.join(latex_justifications))
     lines.insert(0, r'\begin{tabular}' + justification_line)
-    lines.append('\end{tabular}')
+    lines.append(r'\end{tabular}')
     return lines
 
 def right_strip_lines(lines):
