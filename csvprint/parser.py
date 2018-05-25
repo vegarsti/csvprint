@@ -69,7 +69,7 @@ def create():
     group.add_argument(
         '--latex',
         action='store_true',
-        help='output markdown table',
+        help='output latex table',
     )
     return parser
 
@@ -108,16 +108,19 @@ def parse_cli_arguments(parser):
         args['decorator'] = '&'
     return args
 
+def lstrip_cells_in_row(row):
+    return [cell.lstrip() for cell in row]
+
 def store_content(parser, args):
     """Store content in file and extract relevant configurations to the dictionary"""
     csvreader = csv.reader(args['csvfile'], delimiter=args['separator'])
-    header = next(csvreader)
+    header = lstrip_cells_in_row(next(csvreader))
     args['num_columns'] = len(header)
     args['content'] = [header]
     row_number = 0
     for row_number, row in enumerate(islice(csvreader, args['rows'] - 1)):
         args['num_columns'] = max(len(row), args['num_columns'])
-        args['content'].append(row)
+        args['content'].append(lstrip_cells_in_row(row))
     args['rows'] = row_number + 1
     justify_all_columns_equally = len(args['justify']) == 1
     justification_and_columns_differ = len(args['justify']) != args['num_columns']
