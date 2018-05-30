@@ -1,7 +1,7 @@
 import argparse
 
 
-def justification(direction):
+def alignment(direction):
     """Parse the direction, possibly raising error"""
     if direction == "l":
         return "<"

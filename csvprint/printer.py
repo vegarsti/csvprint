@@ -17,15 +17,15 @@ def column_widths(table):
     return [max(map(len, col)) for col in zip(*table)]
 
 
-def justify_table(table, justify):
-    """Return table justified according to justify"""
+def align_table(table, align):
+    """Return table justified according to align"""
     widths = column_widths(table)
     new_table = copy_nested_list(table)
     for row in new_table:
         num_cells = len(row)
         for cell_num, cell in enumerate(row):
             row[cell_num] = "{:{align}{width}}".format(
-                cell, align=justify[cell_num], width=widths[cell_num]
+                cell, align=align[cell_num], width=widths[cell_num]
             )
     return new_table
 
@@ -35,45 +35,45 @@ def header_line(length, border="-"):
     return border * length
 
 
-def md_justification(justification):
-    """Given justification option, return corresponding markdown"""
-    if justification == "<":
+def md_alignment(alignment):
+    """Given alignment option, return corresponding markdown"""
+    if alignment == "<":
         return ":", "-"
-    elif justification == ">":
+    elif alignment == ">":
         return "-", ":"
     else:
         return "-", "-"
 
 
-def latex_justification(justification):
-    """Given justification option, return corresponding latex"""
-    if justification == "<":
+def latex_alignment(alignment):
+    """Given alignment option, return corresponding latex"""
+    if alignment == "<":
         return "l"
-    elif justification == ">":
+    elif alignment == ">":
         return "r"
 
 
-def markdown_header(table, justify):
-    """Get markdown header for table according to given justification options"""
+def markdown_header(table, align):
+    """Get markdown header for table according to given alignment options"""
     widths = column_widths(table)
     header_line = []
     for i, w in enumerate(widths):
         if w < 3:
             raise ValueError
-        left, right = md_justification(justify[i])
+        left, right = md_alignment(align[i])
         header_line.append(left + "-" * (w - 2) + right)
     return header_line
 
 
-def add_markdown_header(table, justify):
+def add_markdown_header(table, align):
     """Add markdown header lines to table"""
     widths = column_widths(table)
     new_table = copy_nested_list(table)
-    new_table.insert(1, markdown_header(table, justify))
+    new_table.insert(1, markdown_header(table, align))
     return new_table
 
 
-def add_header(table, justify):
+def add_header(table, align):
     """Add header lines to table"""
     widths = column_widths(table)
     new_table = copy_nested_list(table)
@@ -113,12 +113,12 @@ def add_latex_line_endings(lines):
     return [line + r" \\" for line in lines]
 
 
-def add_latex_table_environment(lines, number_of_columns, justification):
+def add_latex_table_environment(lines, number_of_columns, alignment):
     """Add latex environment specification"""
     lines = list(lines)
-    latex_justifications = [latex_justification(j) for j in justification]
-    justification_line = "{{{}}}".format("".join(latex_justifications))
-    lines.insert(0, r"\begin{tabular}" + justification_line)
+    latex_alignments = [latex_alignment(j) for j in alignment]
+    alignment_line = "{{{}}}".format("".join(latex_alignments))
+    lines.insert(0, r"\begin{tabular}" + alignment_line)
     lines.append(r"\end{tabular}")
     return lines
 
@@ -132,23 +132,23 @@ def run_pipeline(args):
     """Run the printing pipeline according to arguments given"""
     raw_table = args["content"]
     number_of_columns = args["num_columns"]
-    justification = args["justify"]
+    alignment = args["align"]
     padding = args["padding"]
     output_as_markdown = args["markdown"]
     output_as_latex = args["latex"]
     output_as_header = args["header"]
     decorator = args["decorator"]
     normalized_table = normalize_table(raw_table, number_of_columns)
-    justified_table = justify_table(normalized_table, justification)
+    justified_table = align_table(normalized_table, alignment)
     padded_table = add_padding(justified_table, padding)
     if output_as_markdown:
-        padded_table = add_markdown_header(padded_table, justification)
+        padded_table = add_markdown_header(padded_table, alignment)
     if output_as_header:
-        padded_table = add_header(padded_table, justification)
+        padded_table = add_header(padded_table, alignment)
     lines = join_columns_with_divider(padded_table, decorator)
     if output_as_latex:
         lines = add_latex_line_endings(lines)
-        lines = add_latex_table_environment(lines, number_of_columns, justification)
+        lines = add_latex_table_environment(lines, number_of_columns, alignment)
     else:
         lines = right_strip_lines(lines)
     finished_output = join_formatted_lines(lines)

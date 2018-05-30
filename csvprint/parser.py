@@ -29,13 +29,13 @@ def create():
         help="number of rows to show",
     )
     parser.add_argument(
-        "-j",
-        "--justify",
+        "-a",
+        "--align",
         nargs="+",
         default=["<"],
-        help="which justification to use\ndefault is left\nchoices: {l, r}\n"
+        help="which alignment to use\ndefault is left\nchoices: {l, r}\n"
         + "can provide a list, in which case\none choice for each column",
-        type=justification,
+        type=alignment,
     )
     parser.add_argument(
         "-d",
@@ -104,11 +104,11 @@ def store_content(parser, args):
         args["num_columns"] = max(len(row), args["num_columns"])
         args["content"].append(lstrip_cells_in_row(row))
     args["rows"] = row_number + 1
-    justify_all_columns_equally = len(args["justify"]) == 1
-    justification_and_columns_differ = len(args["justify"]) != args["num_columns"]
-    if justify_all_columns_equally:
-        args["justify"] = [args["justify"][0]] * args["num_columns"]
-    elif justification_and_columns_differ:
+    align_all_columns_equally = len(args["align"]) == 1
+    length_of_alignment_and_columns_differ = len(args["align"]) != args["num_columns"]
+    if align_all_columns_equally:
+        args["align"] = [args["align"][0]] * args["num_columns"]
+    elif length_of_alignment_and_columns_differ:
         print_message_and_exit(
-            parser, "argument -j/--justify: only one argument or one per column"
+            parser, "argument -j/--align: only one argument or one per column"
         )

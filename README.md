@@ -29,7 +29,7 @@ The Godfather: Part II 1974         $13 000 000
 The Dark Knight        2008         $185 000 000
 12 Angry Men           1957         $350 000
 ```
-You can also pipe output from other programs to `csvprint` to format the output:
+You can also pipe into `csvprint`:
 
 ```
 » cat imdb.csv | csvprint
@@ -50,15 +50,15 @@ Command       | Result
 `-p [n]`      | add a padding of `n` spaces for each column, on both sides
 `-s 'char'`   | file is delimited by `char` (instead of comma), `tab` for tab
 `-d [string]` | specify the string to separate columns
-`-j`          | specify justification (left or right) - see examples below
+`-a`          | specify alignment (left or right) - see examples below
 `-h`          | print help message
 
-## Justification example
+## Alignment example
 
-There are three options for specifying justification. One can use `l` or `r` for justifying all cells to the left or right, respectively. One can also specify a distinct justification option for each column. Then the number of options will need to match the number of columns.
+There are three options for specifying alignment. One can use `l` or `r` for aligning all cells to the left or right, respectively. One can also specify a distinct alignment option for each column. Then the number of options will need to match the number of columns.
 
 ```
-» csvprint imdb.csv -j l r r
+» csvprint imdb.csv -a l r r
 Title                  Release Year Estimated Budget
 Shawshank Redemption           1994      $25 000 000
 The Godfather                  1972       $6 000 000
@@ -69,10 +69,10 @@ The Dark Knight                2008     $185 000 000
 
 ## Markdown example
 
-Markdown output also supports left and right justification.
+Markdown output also supports left and right alignment.
 
 ```
-» csvprint examples/imdb.csv --markdown -j l r r
+» csvprint examples/imdb.csv --markdown -a l r r
 Title                  | Release Year | Estimated Budget
 :----------------------|-------------:|----------------:
 Shawshank Redemption   |         1994 |      $25 000 000
