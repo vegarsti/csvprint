@@ -1,4 +1,4 @@
-# ``csvprint``
+# `csvprint`
 
 [![Build Status](https://travis-ci.org/vegarsti/csvprint.svg?branch=master)](https://travis-ci.org/travis-ci/travis-web)
 
@@ -40,6 +40,7 @@ The Godfather: Part II 1974         $13 000 000
 The Dark Knight        2008         $185 000 000
 12 Angry Men           1957         $350 000
 ```
+
 ## Options
 
 Command       | Result
@@ -94,4 +95,4 @@ The Dark Knight        |         2008 |     $185 000 000
 
 ## Testing
 
-Run ``pytest`` while in the root directory of this repository.
+Run `pytest` while in the root directory of this repository.

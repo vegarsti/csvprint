@@ -96,9 +96,9 @@ def lstrip_cells_in_row(row):
 def store_content(parser, args):
     """Store content in file and extract relevant configurations to the dictionary"""
     csvreader = csv.reader(args["csvfile"], delimiter=args["separator"])
-    header = lstrip_cells_in_row(next(csvreader))
+    header = next(csvreader)
     args["num_columns"] = len(header)
-    args["content"] = [header]
+    args["content"] = [lstrip_cells_in_row(header)]
     row_number = 0
     for row_number, row in enumerate(islice(csvreader, args["rows"] - 1)):
         args["num_columns"] = max(len(row), args["num_columns"])
@@ -110,5 +110,5 @@ def store_content(parser, args):
         args["align"] = [args["align"][0]] * args["num_columns"]
     elif length_of_alignment_and_columns_differ:
         print_message_and_exit(
-            parser, "argument -j/--align: only one argument or one per column"
+            parser, "argument -a/--align: only one argument or one per column"
         )
