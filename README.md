@@ -1,6 +1,7 @@
 # `csvprint`
 
 [![Build Status](https://travis-ci.org/vegarsti/csvprint.svg?branch=master)](https://travis-ci.org/travis-ci/travis-web)
+[![codecov](https://codecov.io/gh/vegarsti/csvprint/branch/master/graph/badge.svg)](https://codecov.io/gh/vegarsti/csvprint)
 
 A command-line utility for pretty printing csv files and converting to other formats.
 

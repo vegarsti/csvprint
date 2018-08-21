@@ -8,3 +8,6 @@ build
 27-sdist
 csvprint.egg-info/
 dist
+.env
+.idea
+.coverage
