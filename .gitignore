@@ -10,3 +10,4 @@ csvprint.egg-info/
 dist
 .env
 .idea
+.coverage
