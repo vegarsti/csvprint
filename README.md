@@ -53,6 +53,7 @@ Command       | Result
 `-s 'char'`   | file is delimited by `char` (instead of comma), `tab` for tab
 `-d [string]` | specify the string to separate columns
 `-a`          | specify alignment (left or right) - see examples below
+`-c`          | specify which columns to print 
 `-h`          | print help message
 
 ## Alignment example
