@@ -22,7 +22,6 @@ def align_table(table, align):
     widths = column_widths(table)
     new_table = copy_nested_list(table)
     for row in new_table:
-        num_cells = len(row)
         for cell_num, cell in enumerate(row):
             row[cell_num] = "{:{align}{width}}".format(
                 cell, align=align[cell_num], width=widths[cell_num]
@@ -67,7 +66,6 @@ def markdown_header(table, align):
 
 def add_markdown_header(table, align):
     """Add markdown header lines to table"""
-    widths = column_widths(table)
     new_table = copy_nested_list(table)
     new_table.insert(1, markdown_header(table, align))
     return new_table
@@ -128,23 +126,43 @@ def right_strip_lines(lines):
     return [line.rstrip() for line in lines]
 
 
+def select_columns_from_table(table, columns, alignment):
+    new_table = []
+    new_alignment = []
+    for row in table:
+        new_row = []
+        for column_number in columns:
+            index_number = column_number - 1
+            cell = row[index_number]
+            new_row.append(cell)
+        new_table.append(new_row)
+    for column_number in columns:
+        index_number = column_number - 1
+        new_alignment.append(alignment[index_number])
+    return new_table, new_alignment
+
+
 def run_pipeline(args):
     """Run the printing pipeline according to arguments given"""
     raw_table = args["content"]
-    number_of_columns = args["num_columns"]
     alignment = args["align"]
     padding = args["padding"]
     output_as_markdown = args["markdown"]
     output_as_latex = args["latex"]
     output_as_header = args["header"]
     decorator = args["decorator"]
-    normalized_table = normalize_table(raw_table, number_of_columns)
-    justified_table = align_table(normalized_table, alignment)
+    columns_to_print = args["columns"]
+    number_of_columns = len(columns_to_print)
+    raw_table_subset, alignment_subset = select_columns_from_table(
+        raw_table, columns_to_print, alignment
+    )
+    normalized_table = normalize_table(raw_table_subset, number_of_columns)
+    justified_table = align_table(normalized_table, alignment_subset)
     padded_table = add_padding(justified_table, padding)
     if output_as_markdown:
-        padded_table = add_markdown_header(padded_table, alignment)
+        padded_table = add_markdown_header(padded_table, alignment_subset)
     if output_as_header:
-        padded_table = add_header(padded_table, alignment)
+        padded_table = add_header(padded_table, alignment_subset)
     lines = join_columns_with_divider(padded_table, decorator)
     if output_as_latex:
         lines = add_latex_line_endings(lines)

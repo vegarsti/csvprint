@@ -18,7 +18,7 @@ def create():
         "-s",
         "--separator",
         default=",",
-        help="separator/delimiter used in csv file\ndefault is comma\nuse 'tab' for tab separated files\n",
+        help="separator/delimiter used in csv file\ndefault is comma: ','\nuse 'tab' for tab separated files\n",
         type=separator,
     )
     parser.add_argument(
@@ -46,6 +46,14 @@ def create():
     )
     parser.add_argument(
         "-p", "--padding", type=non_negative_integer, default=1, help="padding"
+    )
+    parser.add_argument(
+        "-c",
+        "--columns",
+        type=int,
+        nargs="*",
+        metavar="column",
+        help="select columns to print (1-indexed)",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--header", action="store_true", help="header decoration")
@@ -93,6 +101,10 @@ def lstrip_cells_in_row(row):
     return [cell.lstrip() for cell in row]
 
 
+def list_of_numbers_is_sorted_and_contains_unique_elements(numbers):
+    return sorted(list(set(numbers))) == numbers
+
+
 def store_content(parser, args):
     """Store content in file and extract relevant configurations to the dictionary"""
     csvreader = csv.reader(args["csvfile"], delimiter=args["separator"])
@@ -111,4 +123,15 @@ def store_content(parser, args):
     elif length_of_alignment_and_columns_differ:
         print_message_and_exit(
             parser, "argument -a/--align: only one argument or one per column"
+        )
+    if args["columns"] is None:
+        args["columns"] = list(range(1, args["num_columns"] + 1))
+    elif not all(0 < c <= args["num_columns"] for c in args["columns"]):
+        print_message_and_exit(
+            parser, "argument -c/--columns: column number out of range"
+        )
+    elif not list_of_numbers_is_sorted_and_contains_unique_elements(args["columns"]):
+        print_message_and_exit(
+            parser,
+            "argument -c/--columns: column numbers must be unique and in ascending order",
         )
