@@ -38,6 +38,13 @@ The Godfather         1972          $6 000 000"""
 
 expected_oneline_output = """Title  Release Year  Estimated Budget"""
 
+expected_one_column_output = """Estimated Budget
+$25 000 000
+$6 000 000
+$13 000 000
+$185 000 000
+$350 000"""
+
 expected_justified_markdown_output = """Title                  | Release Year | Estimated Budget
 :----------------------|-------------:|----------------:
 Shawshank Redemption   |         1994 |      $25 000 000
@@ -88,4 +95,5 @@ test_cases = [
     ([NORMAL_FILENAME, '--header', '-d', ' o '], expected_header_with_decorator_output),
     (['examples/imdb-latex.csv', '--latex'], expected_latex_output),
     (['examples/imdb-latex.csv', '--latex', '-a', 'l', 'r', 'r'], expected_latex_with_justification_output),
+    ([NORMAL_FILENAME, '--c', '3'], expected_one_column_output)
 ]
