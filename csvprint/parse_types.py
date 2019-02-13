@@ -45,3 +45,26 @@ def non_negative_integer(n):
         return n
     else:
         raise argparse.ArgumentTypeError(message)
+
+
+def decimal_number_formatting(arg):
+    """On format [column_number]:[decimal_numbers]"""
+    split = arg.split(":")
+    if len(split) != 2:
+        raise argparse.ArgumentTypeError(
+            "must be on format [column_number]:[decimal_numbers]"
+        )
+    column, decimals = split
+    try:
+        column = int(column)
+    except:
+        raise argparse.ArgumentTypeError("column must be integer")
+    if column < 1:
+        raise argparse.ArgumentTypeError("column must be positive")
+    try:
+        decimals = int(decimals)
+    except:
+        raise argparse.ArgumentTypeError("decimals must be integer")
+    if column < 0:
+        raise argparse.ArgumentTypeError("decimals must be non-negative")
+    return column, decimals

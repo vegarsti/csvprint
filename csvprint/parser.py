@@ -55,6 +55,12 @@ def create():
         metavar="column",
         help="select columns to print (1-indexed)",
     )
+    parser.add_argument(
+        "--numeric",
+        type=decimal_number_formatting,
+        nargs="*",
+        help="format numerical columns",
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--header", action="store_true", help="header decoration")
     group.add_argument("--markdown", action="store_true", help="output markdown table")

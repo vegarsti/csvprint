@@ -153,6 +153,19 @@ def run_pipeline(args):
     decorator = args["decorator"]
     columns_to_print = args["columns"]
     number_of_columns = len(columns_to_print)
+    if args["numeric"] is not None:
+        transposed_table = list(zip(*raw_table))
+        for column_number, decimal_numbers in args["numeric"]:
+            numeric_column = transposed_table[column_number - 1]
+            new_column = []
+            for number in numeric_column:
+                try:
+                    number = f"%.{decimal_numbers}f" % float(number)
+                except:
+                    number = number
+                new_column.append(number)
+            transposed_table[column_number - 1] = new_column
+        raw_table = list(zip(*transposed_table))
     raw_table_subset, alignment_subset = select_columns_from_table(
         raw_table, columns_to_print, alignment
     )
