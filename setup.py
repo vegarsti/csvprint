@@ -5,7 +5,7 @@ with open("README.md", "r") as readme:
 
 setup(
     name="csvprint",
-    version="0.6",
+    version="0.6.1",
     description="Print csv files in columnated format, either plain or as a Markdown or LaTeX table",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
