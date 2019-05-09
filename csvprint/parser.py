@@ -127,7 +127,7 @@ def parse_column_strings(parser, column_descriptions):
         else:
             split = column_description.split("-")
             if not is_valid_column_description(split):
-                print_message_and_exit(parser, "Invalid column format")
+                print_message_and_exit(parser, "argument -c/--columns: Invalid column format")
             cols.extend(list(range(int(split[0]), int(split[1])+1)))
 
     return cols    
