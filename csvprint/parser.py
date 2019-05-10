@@ -50,7 +50,7 @@ def create():
     parser.add_argument(
         "-c",
         "--columns",
-        type=int,
+        type=str,
         nargs="*",
         metavar="column",
         help="select columns to print (1-indexed)",
@@ -111,6 +111,28 @@ def list_of_numbers_is_sorted_and_contains_unique_elements(numbers):
     return sorted(list(set(numbers))) == numbers
 
 
+def is_valid_column_description(split):
+    # A column description must be a on the format digit+dash+digit
+    return  (len(split) == 2)                               \
+        and (split[0].isdigit() and split[1].isdigit())     \
+        and (split[0] != "" and split[1] != "")
+
+
+def parse_column_strings(parser, column_descriptions):
+    cols = []
+
+    for column_description in column_descriptions:
+        if column_description.isdigit():
+            cols.append(int(column_description))
+        else:
+            split = column_description.split("-")
+            if not is_valid_column_description(split):
+                print_message_and_exit(parser, "argument -c/--columns: Invalid column format")
+            cols.extend(list(range(int(split[0]), int(split[1])+1)))
+
+    return cols    
+
+
 def store_content(parser, args):
     """Store content in file and extract relevant configurations to the dictionary"""
     csvreader = csv.reader(args["csvfile"], delimiter=args["separator"])
@@ -132,7 +154,10 @@ def store_content(parser, args):
         )
     if args["columns"] is None:
         args["columns"] = list(range(1, args["num_columns"] + 1))
-    elif not all(0 < c <= args["num_columns"] for c in args["columns"]):
+    else:
+        args["columns"] = parse_column_strings(parser, args["columns"])
+
+    if not all(0 < c <= args["num_columns"] for c in args["columns"]):
         print_message_and_exit(
             parser, "argument -c/--columns: column number out of range"
         )
