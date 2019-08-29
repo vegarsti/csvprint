@@ -9,6 +9,15 @@ A command-line utility for pretty printing csv files and converting to other for
 
 If Python 3 with the package manager pip is installed, doing `pip3 install csvprint` in your terminal should do the trick.
 
+## Development installation
+
+With [pipenv](https://github.com/pypa/pipenv) installed.
+
+1. Clone this repo
+2. Do `pipenv install`
+3. `pipenv shell`
+4. `pip install -e .`
+
 ## Usage
 
 `csvprint [filename]` prints a formatted table if `filename` is a comma separated file.
