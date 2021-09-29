@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "csvprint"
-version = "0.7.1"
+version = "0.7.2"
 description = "Print csv files in columnated format, either plain or as a Markdown or LaTeX table"
 authors = ["Vegard Stikbakke <vegard.stikbakke@gmail.com>"]
 license = "MIT"
@@ -20,4 +20,4 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry.scripts]
-csvprint = "bin.csvprint:main"
+csvprint = "csvprint.__main__:main"
